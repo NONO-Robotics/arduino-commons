@@ -8,4 +8,5 @@ arduino-commons
   * [4w-robot-ros-movement](https://github.com/adrianmarino/4w-robot-ros-movement.git) firmware.
   * [4w-robot-ros-w-publisher](https://github.com/adrianmarino/4w-robot-ros-w-publisher) firmware.
   * [4w-robot-ros-ws](https://github.com/adrianmarino/4w-robot-ros-ws) central nodes.
+  * [Solidworks Model](https://drive.google.com/drive/folders/1mQg-BSRZyyYhnBoig6Qm0Zf43U8bTAA7?usp=sharing)
   * [ardino-ros](https://github.com/adrianmarino/arduino-ros) library.
