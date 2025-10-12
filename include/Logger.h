@@ -20,6 +20,13 @@ private:
 public:
   Logger(unsigned long baud, LogLevel level = INFO);
 
+  bool isDebug();
+  bool isTrace();
+  bool isInfo();
+  bool isWarn();
+  bool isError();
+  bool isFatal();
+
   void setLevel(LogLevel level);
   void debugPlot(String varName, float value);
   void trace(String msg);

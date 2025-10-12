@@ -66,7 +66,31 @@ void Logger::fatal(String msg) {
 }
 
 void Logger::debugPlot(String varName, float value) {
-  if (LogLevel::DEBUG >= level) {
+  if (isDebug()) {
     Serial.println(">" + varName + ":" + String(value)); 
   }
+}
+
+bool Logger::isDebug() {
+    return level <= DEBUG;
+}
+
+bool Logger::isTrace() {
+    return level <= TRACE;
+}
+
+bool Logger::isInfo() {
+    return level <= INFO;
+}
+
+bool Logger::isWarn() {
+    return level <= WARN;
+}
+
+bool Logger::isError() {
+    return level <= ERROR;
+}
+
+bool Logger::isFatal() {
+    return level <= FATAL;
 }
