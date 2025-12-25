@@ -9,5 +9,10 @@
     },
     "license": "MIT",
     "frameworks": "*",
-    "platforms": "*"
+    "platforms": "*",
+    "dependencies": {
+        "EWMA": "https://github.com/jonnieZG/EWMA",
+        "imu": "adafruit/Adafruit BNO08x@^1.2.5",
+        "gps": "mikalhart/TinyGPSPlus@^1.0.2"
+    }
 }
