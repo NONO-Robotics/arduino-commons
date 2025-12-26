@@ -1,4 +1,4 @@
-#pragma one
+#pragma once
 
 bool between(float value, float min, float max);
 
