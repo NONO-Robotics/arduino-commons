@@ -1,3 +1,4 @@
-adafruit/Adafruit BNO08x@^1.2.5
 mikalhart/TinyGPSPlus@^1.0.2
 https://github.com/jonnieZG/EWMA
+olikraus/U8g2@^2.35.9
+adafruit/Adafruit BNO08x@^1.2.5
