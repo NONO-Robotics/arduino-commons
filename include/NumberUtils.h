@@ -1,13 +1,15 @@
 #pragma once
 
-bool between(float value, float min, float max);
+bool between(float value, float min, float max) {
+  return value >= min && value <= max;
+}
 
-bool between(float value, float limit);
+int intClamp(int valor, int min, int max) {
+  if (valor < min)
+    return min;
+  if (valor > max)
+    return max;
+  return valor;
+}
 
-template <typename T> T clamp(T valor, T min, T max);
-
-template <typename T> T minClamp(T a, T b);
-
-template <typename T> T maxClamp(T a, T b);
-
-template <typename T> int sign(T value);
+int floatSign(float value) { return value > 0 ? 1 : -1; }

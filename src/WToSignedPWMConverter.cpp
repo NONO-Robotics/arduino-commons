@@ -20,12 +20,12 @@ int WToSignedPWMConverter::convert(float w) {
   // PWM = ( |Current Omega| / Max Omega ) * maxPwmLimit_Counts
   int pwm = (abs(w) / maxW) * (float)maxPwmLimit;
 
-  pwm = clamp(
+  pwm = intClamp(
     pwm, 
     minPwm, 
     maxPwm > 0 ? maxPwm: maxPwmLimit);
 
-  return sign(w) * pwm;
+  return floatSign(w) * pwm;
 };
 
 
