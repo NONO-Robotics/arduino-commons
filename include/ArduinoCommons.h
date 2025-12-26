@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Arduino.h>
 #include "AS5600Sensor.h"
 #include "BLDCMotor.h"
 #include "BLDCMotorBuilder.h"
@@ -19,8 +18,10 @@
 #include "MagneticEncoder.h"
 #include "MagneticEncoderBuilder.h"
 #include "Number.h"
+#include "SimpleDisplay.h"
+#include "SimpleTimer.h"
 #include "StringUtils.h"
 #include "TwoWheelsRobotW.h"
 #include "WToSignedPWMConverter.h"
 #include "timestamp.h"
-#include "SimpleDisplay.h"
+#include <Arduino.h>
