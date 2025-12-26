@@ -1,5 +1,4 @@
-#ifndef DC_MOTOR
-#define DC_MOTOR
+#pragma once
 #include <Arduino.h>
 
 /** 
@@ -47,5 +46,3 @@ public:
      */
     void stop();
 };
-
-#endif

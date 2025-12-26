@@ -16,7 +16,7 @@
 #include "Logger.h"
 #include "MagneticEncoder.h"
 #include "MagneticEncoderBuilder.h"
-#include "NumberUtils.h"
+#include "Number.h"
 #include "StringUtils.h"
 #include "TwoWheelsRobotW.h"
 #include "WToSignedPWMConverter.h"

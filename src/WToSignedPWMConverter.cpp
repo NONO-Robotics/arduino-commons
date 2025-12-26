@@ -1,5 +1,16 @@
 #include "WToSignedPWMConverter.h"
 
+int intClamp(int valor, int min, int max) {
+  if (valor < min)
+    return min;
+  if (valor > max)
+    return max;
+  return valor;
+}
+
+int floatSign(float value) { return value > 0 ? 1 : -1; }
+
+
 WToSignedPWMConverter::WToSignedPWMConverter(
                                              float maxW,
                                              int pwmResolutionInBits,
