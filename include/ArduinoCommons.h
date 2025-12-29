@@ -27,3 +27,4 @@
 #include "timestamp.h"
 #include "Button.h"
 #include "ConfigStorage.h"
+#include "MultiResetDetector.h"
