@@ -24,7 +24,6 @@
 #include "SimpleDisplay.h"
 #include "SimpleTimer.h"
 #include "StringUtils.h"
-#include "TwoWheelsRobotW.h"
 #include "WToSignedPWMConverter.h"
 #include "timestamp.h"
 #include <Arduino.h>
