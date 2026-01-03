@@ -1,6 +1,7 @@
 #pragma once
 
-class FourWheelAngularSpeed {
+class FourWheelAngularSpeed
+{
 private:
   float fl;
   float fr;
@@ -38,4 +39,9 @@ public:
    * Get back right wheel speed in rad/s
    */
   float getBrWInRad() const;
+
+  void setFl(float w);
+  void setFr(float w);
+  void setBl(float w);
+  void setBr(float w);
 };

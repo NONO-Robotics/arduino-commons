@@ -10,7 +10,6 @@
 #include "DifferentialRobotOdometry.h"
 #include "EncoderAngularVelocityEstimator.h"
 #include "FourWheelAngularSpeed.h"
-#include "FourWheelsRobotW.h"
 #include "GPSData.h"
 #include "GPSSensor.h"
 #include "I2CMultiplexor.h"
