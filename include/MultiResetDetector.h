@@ -1,20 +1,23 @@
 #pragma once
-#include <LittleFS.h>
+#include "PersistentCounter.h"
 #include "Logger.h"
 
 class MultiResetDetector
 {
 private:
-    const char *_path = "/drd.txt";
     uint32_t _windowMs;
     uint8_t _targetResets; // Cantidad de resets configurables
     bool _cleared = false;
     bool _initialized = false;
+    PersistentCounter *counter;
 
 public:
     // Ahora recibe el tiempo de ventana y la cantidad de resets deseada
     MultiResetDetector(uint32_t windowMs = 10000, uint8_t targetResets = 2)
-        : _windowMs(windowMs), _targetResets(targetResets) {}
+        : _windowMs(windowMs), _targetResets(targetResets)
+    {
+        counter = new PersistentCounter("/drd.txt");
+    }
 
     bool detect()
     {
@@ -25,23 +28,16 @@ public:
         }
         _initialized = true;
 
-        uint8_t currentCount = 0;
+        uint8_t currentCount = counter->read();
 
-        // 1. Leer el contador actual si existe
-        if (LittleFS.exists(_path))
+        // Si el reinitio se dio por precionar el boton reset.
+        if (esp_reset_reason() == ESP_RST_EXT)
         {
-            File f = LittleFS.open(_path, "r");
-            if (f)
-            {
-                currentCount = f.readString().toInt();
-                f.close();
-            }
+            currentCount++;
+            logger.info("[MultiResetDetector]: Reset detected (" + String(currentCount) + "/" + String(_targetResets) + ")");
         }
 
-        currentCount++;
-        logger.info("[MultiResetDetector]: Reset detected (" + String(currentCount) + "/" + String(_targetResets) + ")");
-
-        // 2. Verificar si llegamos al objetivo
+        // Verificar si llegamos al objetivo
         if (currentCount >= _targetResets)
         {
             logger.info("[MultiResetDetector]: Target resets reached!");
@@ -49,14 +45,8 @@ public:
             return true;
         }
 
-        // 3. Guardar el nuevo valor del contador
-        File f = LittleFS.open(_path, "w");
-        if (f)
-        {
-            f.print(currentCount);
-            f.close();
-        }
-        
+        counter->save(currentCount);
+
         return false;
     }
 
@@ -78,10 +68,7 @@ public:
         if (!_initialized)
             return;
 
-        if (LittleFS.exists(_path))
-        {
-            LittleFS.remove(_path);
-        }
+        counter->reset();
         _cleared = true;
     }
 };
