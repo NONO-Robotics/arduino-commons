@@ -40,8 +40,8 @@ public:
    */
   float getBrWInRad() const;
 
-  float setFl(float w);
-  float setFr(float w);
-  float setBl(float w);
-  float setBr(float w);
+  float setFlWInRad(float w);
+  float setFrWInRad(float w);
+  float setBlWInRad(float w);
+  float setBrWInRad(float w);
 };
