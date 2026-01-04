@@ -54,9 +54,9 @@ void FourWheelBLDCController::stop() {
 }
 
 void FourWheelBLDCController::applySpeed(
-    FourWheelAngularSpeed *fwAngularSpeed) {
-  motorFrontRightController->setRadsBySegSpeed(fwAngularSpeed->getFrWInRad());
-  motorFrontLeftController->setRadsBySegSpeed(fwAngularSpeed->getFlWInRad());
-  motorBackRightController->setRadsBySegSpeed(fwAngularSpeed->getBrWInRad());
-  motorBackLeftController->setRadsBySegSpeed(fwAngularSpeed->getBlWInRad());
+    const FourWheelAngularSpeed& fwAngularSpeed) {
+  motorFrontRightController->setRadsBySegSpeed(fwAngularSpeed.getFrWInRad());
+  motorFrontLeftController->setRadsBySegSpeed(fwAngularSpeed.getFlWInRad());
+  motorBackRightController->setRadsBySegSpeed(fwAngularSpeed.getBrWInRad());
+  motorBackLeftController->setRadsBySegSpeed(fwAngularSpeed.getBlWInRad());
 }

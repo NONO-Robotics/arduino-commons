@@ -21,5 +21,5 @@ public:
 
   void stop();
 
-  void applySpeed(FourWheelAngularSpeed *fwAngularSpeed);
+  void applySpeed(const FourWheelAngularSpeed& fwAngularSpeed);
 };
