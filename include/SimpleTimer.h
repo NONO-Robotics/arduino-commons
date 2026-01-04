@@ -2,47 +2,47 @@
 #include <functional>
 
 /**
- * @brief Clase para ejecutar una función (closure/lambda) periódicamente
- * dentro del loop principal, sin usar hilos de FreeRTOS.
+ * @brief Class to execute a function (closure/lambda) periodically
+ * within the main loop, without using FreeRTOS tasks.
  */
 class SimpleTimer {
 public:
-    using TaskFunction = std::function<void()>;
+  using TaskFunction = std::function<void()>;
 
-    /**
-     * @brief Constructor del temporizador.
-     * @param msInterval El tiempo en milisegundos para el intervalo de ejecución.
-     * @param func La función (o lambda) que se ejecutará periódicamente.
-     */
-    SimpleTimer(uint32_t msInterval, TaskFunction func)
-        : interval_ms(msInterval), taskFunc(func), last_execution_ms(0) {
-        // Inicializa el tiempo de la última ejecución al crear el objeto.
-    }
+  /**
+   * @brief Timer Constructor.
+   * @param msInterval Interval execution time in milliseconds.
+   * @param func Function (or lambda) to execute periodically.
+   */
+  SimpleTimer(uint32_t msInterval, TaskFunction func)
+      : interval_ms(msInterval), taskFunc(func), last_execution_ms(0) {
+    // Initializes last execution time on object creation.
+  }
 
-    /**
-     * @brief Este método debe ser llamado en el loop() principal de Arduino.
-     * Verifica si ha pasado el tiempo necesario y, de ser así, ejecuta la función.
-     */
-    void update() {
-        uint32_t current_ms = millis();
-        
-        // La condición usa resta para manejar correctamente el desbordamiento de millis() (rollover).
-        if (current_ms - last_execution_ms >= interval_ms) {
-            
-            // 1. Actualizar el tiempo de la última ejecución ANTES de correr la función.
-            //    Esto asegura que el intervalo se base en el tiempo real, no en el tiempo
-            //    que toma la ejecución del código.
-            last_execution_ms = current_ms; 
-            
-            // 2. Ejecutar el closure/lambda
-            if (taskFunc) {
-                taskFunc();
-            }
-        }
+  /**
+   * @brief Should be called in the main loop().
+   * Checks if interval has passed and executes the function if so.
+   */
+  void update() {
+    uint32_t current_ms = millis();
+
+    // Handles millis() rollover correctly with subtraction.
+    if (current_ms - last_execution_ms >= interval_ms) {
+
+      // 1. Update last execution time BEFORE running the function.
+      //    Ensures interval is based on real time, not execution duration.
+      last_execution_ms = current_ms;
+
+      // 2. Execute the closure/lambda
+      if (taskFunc) {
+        taskFunc();
+      }
     }
+  }
 
 private:
-    uint32_t interval_ms;
-    TaskFunction taskFunc;
-    uint32_t last_execution_ms; // Almacena el tiempo de la última ejecución exitosa
+  uint32_t interval_ms;
+  TaskFunction taskFunc;
+  uint32_t
+      last_execution_ms; /// Stores the time of the last successful execution
 };

@@ -1,5 +1,16 @@
 #pragma once
 
+/**
+ * @file ArduinoCommons.h
+ * @brief Main include file for the Arduino Commons library.
+ *
+ * Include this file to access all the features of the library:
+ * - Motors (BLDC, DC)
+ * - Sensors (GPS, IMU, Magnetic Encoder)
+ * - Odometry
+ * - Utilities (Logger, Config, Timer, Display)
+ */
+
 #include "AS5600Sensor.h"
 #include "BLDCMotor.h"
 #include "BLDCMotorBuilder.h"

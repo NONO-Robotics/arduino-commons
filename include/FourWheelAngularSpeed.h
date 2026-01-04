@@ -1,7 +1,6 @@
 #pragma once
 
-class FourWheelAngularSpeed
-{
+class FourWheelAngularSpeed {
 private:
   float fl;
   float fr;
@@ -40,8 +39,31 @@ public:
    */
   float getBrWInRad() const;
 
+  /**
+   * @brief Set front left wheel speed.
+   * @param w Speed in rad/s.
+   * @return New speed.
+   */
   float setFlWInRad(float w);
+
+  /**
+   * @brief Set front right wheel speed.
+   * @param w Speed in rad/s.
+   * @return New speed.
+   */
   float setFrWInRad(float w);
+
+  /**
+   * @brief Set back left wheel speed.
+   * @param w Speed in rad/s.
+   * @return New speed.
+   */
   float setBlWInRad(float w);
+
+  /**
+   * @brief Set back right wheel speed.
+   * @param w Speed in rad/s.
+   * @return New speed.
+   */
   float setBrWInRad(float w);
 };

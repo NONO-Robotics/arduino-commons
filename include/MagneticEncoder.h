@@ -6,6 +6,12 @@
 #include <Logger.h>
 #include <math.h>
 
+/**
+ * @brief Callback function type for velocity updates.
+ * @param channel Motor channel.
+ * @param step Current step count.
+ * @param w Angular velocity in rad/s.
+ */
 typedef void (*OnUpdateWEvent)(short int channel, int step, float w);
 
 const int DEFAULT_SAMPLE_INTERVAL_MS = 50;

@@ -168,9 +168,90 @@ void loop() {
 }
 ```
 
+#### `DifferentialRobotOdometry`
+Calculates odometry for differential drive robots based on wheel velocities.
+
+```cpp
+#include <DifferentialRobotOdometry.h>
+
+DifferentialRobotOdometry odometry(0.1, 0.5); // radius, separation
+
+void loop() {
+    // Update with current wheel speeds
+    FourWheelAngularSpeed speeds = {5.0, 5.0, 5.0, 5.0};
+    odometry.calculate(speeds);
+    
+    float v_linear = odometry.getLinearSpeed();
+    float v_angular = odometry.getAngularSpeed();
+}
+```
+
 ---
 
 ### 🛠 Utilities
+
+#### `Logger`
+Simple logging utility with multiple log levels (TRACE, DEBUG, INFO, WARN, ERROR, FATAL).
+
+```cpp
+#include <Logger.h>
+
+void setup() {
+    logger.setLevel(DEBUG);
+    logger.info("System initializing...");
+}
+```
+
+#### `ConfigStorage`
+Save and load configuration (JSON) using LittleFS.
+
+```cpp
+#include <ConfigStorage.h>
+
+ConfigStorage config("/settings.json");
+
+void setup() {
+    config.begin();
+    String ssid = config.get("wifi_ssid", "default");
+    config.set("wifi_ssid", "NewSSID");
+    config.save();
+}
+```
+
+#### `MultiResetDetector`
+Detects multiple consecutive resets to trigger special modes (e.g., WiFi config portal).
+
+```cpp
+#include <MultiResetDetector.h>
+
+MultiResetDetector mrd(2000, 3); // 2s window, 3 resets
+
+void setup() {
+    if (mrd.detect()) {
+        logger.info("Entering Config Mode...");
+        // Enter config mode
+    }
+}
+
+void loop() {
+    mrd.process();
+}
+```
+
+#### `Button`
+Simple debounced button class.
+
+```cpp
+#include <Button.h>
+
+Button btn(0); // GPIO 0 (Boot button)
+
+void loop() {
+    if (btn.pressed()) {
+        // Handle press
+    }
+}
+```
 
 #### `SimpleTimer`
 Execute tasks periodically without blocking `loop()`.
@@ -178,21 +259,13 @@ Execute tasks periodically without blocking `loop()`.
 ```cpp
 #include <SimpleTimer.h>
 
-void blinkParam(int pin) {
-    digitalWrite(pin, !digitalRead(pin));
-}
-
 // execute callback every 1000ms
 SimpleTimer timer(1000, []() {
     Serial.println("Tick!");
 });
 
-void setup() {
-    // ...
-}
-
 void loop() {
-    timer.update(); // Checks time and runs task if ready
+    timer.update();
 }
 ```
 
@@ -221,13 +294,11 @@ DeltaTimeComputer dtComputer;
 void loop() {
     dtComputer.update();
     float dt = dtComputer.deltaInMillis() / 1000.0f;
-    
-    // Use dt for PID or Odometry
 }
 ```
 
 #### `I2CMultiplexor`
-Switch channels on TCA9548A multiplexers to use multiple devices with the same I2C address.
+Switch channels on TCA9548A multiplexers.
 
 ```cpp
 #include <I2CMultiplexor.h>
@@ -236,7 +307,17 @@ I2CMultiplexor mux(0x70);
 
 void setup() {
     mux.selectChannel(2);
-    // Now talk to device on channel 2
+}
+```
+
+#### `timestamp`
+NTP synchronization helper.
+
+```cpp
+#include <timestamp.h>
+
+void setup() {
+    syncClockTimeStamp(); // Syncs with pool.ntp.org
 }
 ```
 
