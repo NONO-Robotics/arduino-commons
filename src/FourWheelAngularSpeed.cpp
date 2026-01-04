@@ -14,7 +14,7 @@ float FourWheelAngularSpeed::getFrWInRad() const { return fr; }
 float FourWheelAngularSpeed::getBlWInRad() const { return bl; }
 float FourWheelAngularSpeed::getBrWInRad() const { return br; }
 
-void FourWheelAngularSpeed::setFl(float w) { fl = w; }
-void FourWheelAngularSpeed::setFr(float w) { fr = w; }
-void FourWheelAngularSpeed::setBl(float w) { bl = w; }
-void FourWheelAngularSpeed::setBr(float w) { br = w; }
+float FourWheelAngularSpeed::setFl(float w) { fl = w; return fl;}
+float FourWheelAngularSpeed::setFr(float w) { fr = w; return fr;}
+float FourWheelAngularSpeed::setBl(float w) { bl = w; return bl;}
+float FourWheelAngularSpeed::setBr(float w) { br = w; return br;}
