@@ -40,4 +40,11 @@
 # debug information files
 *.dwo
 
+<<<<<<< Updated upstream
 examples/basic_test/.pio/
+=======
+**/*.pio/
+**/*.vscode/
+
+
+>>>>>>> Stashed changes
