@@ -4,16 +4,20 @@ ConfigStorage::ConfigStorage(String path) :path(path) {}
 
 bool ConfigStorage::begin()
 {
-    if (!LittleFS.begin(true))
+    if (!LittleFS.begin(true)) {
+        logger.error("Can't mount LittleFS");
         return false;
-    if (LittleFS.exists(path))
-    {
+    }
+
+    if (LittleFS.exists(path)) {
         File file = LittleFS.open(path, "r");
-        if (file)
-        {
-            deserializeJson(doc, file);
+        if (file) {
+            DeserializationError error = deserializeJson(doc, file);
             file.close();
+            if (error) logger.error("JSON deserialization error");
         }
+    } else {
+        save();
     }
     return true;
 }

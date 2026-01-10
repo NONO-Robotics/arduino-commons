@@ -13,7 +13,9 @@ public:
    * @brief Construct a new Persistent Counter.
    * @param path File path.
    */
-  PersistentCounter(const char *path) { this->path = path; }
+  PersistentCounter(const char *path) { 
+    this->path = path;
+  }
 
   /**
    * @brief Read the current counter value.
@@ -28,6 +30,8 @@ public:
         currentCount = f.readString().toInt();
         f.close();
       }
+    } else {
+      save(currentCount);
     }
     return currentCount;
   }

@@ -2,6 +2,7 @@
 #include "FS.h"
 #include "LittleFS.h"
 #include <ArduinoJson.h>
+#include "Logger.h"
 
 /**
  * @brief Helper class to store configuration in LittleFS (JSON format).
