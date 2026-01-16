@@ -1,6 +1,9 @@
 #pragma once
 #include <Arduino.h>
 
+
+typedef void (*OnDeltaTimeReachedEvent)();
+
 /**
  * DeltaTimeComputer class for calculating time intervals.
  *
@@ -59,6 +62,8 @@ public:
    * @return True if the time period has been reached, false otherwise.
    */
   bool hasBeenReached(unsigned int deltaParam);
+
+  void update(OnDeltaTimeReachedEvent event);
 
   /**
    * Get the configured delta time.
