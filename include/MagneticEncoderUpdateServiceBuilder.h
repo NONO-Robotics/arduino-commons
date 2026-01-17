@@ -19,6 +19,7 @@ public:
         this->encoders = new MagneticEncoder*[size];
         this->size = size;
         this->multiplexorAddress = multiplexorAddress;
+        this->counter = 0;
     }
 
     MagneticEncoderUpdateServiceBuilder *addEncoder(
@@ -31,8 +32,8 @@ public:
         int address = AS5600_DEFAULT_ADDR,
         TwoWire *i2cPort = &Wire)
     {
-        logger.info("Create encoder on channel#" + String(channel) + "...");
-        encoders[counter++] = new MagneticEncoder(
+        logger.info("Create encoder on channel #" + String(channel) + "...");
+        this->encoders[counter] = new MagneticEncoder(
             cb,
             channel,
             sampleIntervalMs,
@@ -41,6 +42,7 @@ public:
             deadZone,
             address,
             i2cPort);
+        counter++;
         return this;
     }
 
