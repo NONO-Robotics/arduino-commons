@@ -20,7 +20,7 @@ This library is part of the **4w-ros-robot** project family.
   * **Navigation**
     * [4w-robot-ros-ws](https://github.com/adrianmarino/4w-robot-ros-ws): Autonomous/manual navigation control project.
   * **Sensor data publisher firmware**
-      * [4w-robot-ros-lidar](https://github.com/adrianmarino/4w-ros-robot-lidar): LIDAR sensor publisher firmware.
+      * [4w-robot-ros-lidar](https://github.com/adrianmarino/4w-robot-ros-lidar): LIDAR sensor publisher firmware.
   * **Libraries**
     * [arduino-ros](https://github.com/adrianmarino/arduino-ros): ROS common library.
     * [arduino-commons](https://github.com/adrianmarino/arduino-commons): Arduino common library.
