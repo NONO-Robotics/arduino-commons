@@ -4,7 +4,8 @@
 /**
  * @brief Helper class to store a single counter value in LittleFS.
  */
-class PersistentCounter {
+class PersistentCounter
+{
 private:
   const char *path;
 
@@ -13,7 +14,8 @@ public:
    * @brief Construct a new Persistent Counter.
    * @param path File path.
    */
-  PersistentCounter(const char *path) { 
+  PersistentCounter(const char *path)
+  {
     this->path = path;
   }
 
@@ -21,28 +23,34 @@ public:
    * @brief Read the current counter value.
    * @return Current count or 0 if not found.
    */
-  int read() {
-    uint8_t currentCount = 0;
+    int read() {
+        uint8_t currentCount = 0;
 
-    if (LittleFS.exists(path)) {
-      File f = LittleFS.open(path, "r");
-      if (f) {
-        currentCount = f.readString().toInt();
-        f.close();
-      }
-    } else {
-      save(currentCount);
+        if (!LittleFS.exists(path)) {
+            save(0); // Crear archivo silenciosamente
+            return 0;
+        }
+
+        File f = LittleFS.open(path, "r");
+        if (f) {
+            String content = f.readString();
+            if (content.length() > 0) {
+                currentCount = content.toInt();
+            }
+            f.close();
+        }
+        return currentCount;
     }
-    return currentCount;
-  }
 
   /**
    * @brief Save the counter value to file.
    * @param currentCount Value to save.
    */
-  void save(uint8_t currentCount) {
+  void save(uint8_t currentCount)
+  {
     File f = LittleFS.open(path, "w");
-    if (f) {
+    if (f)
+    {
       f.print(currentCount);
       f.close();
     }
@@ -51,8 +59,10 @@ public:
   /**
    * @brief Delete the counter file (reset to 0).
    */
-  void reset() {
-    if (LittleFS.exists(path)) {
+  void reset()
+  {
+    if (LittleFS.exists(path))
+    {
       LittleFS.remove(path);
     }
   }

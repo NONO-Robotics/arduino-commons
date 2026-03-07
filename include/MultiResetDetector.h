@@ -25,7 +25,7 @@ public:
    */
   MultiResetDetector(uint32_t windowMs = 10000, uint8_t targetResets = 2)
       : _windowMs(windowMs), _targetResets(targetResets) {
-    counter = new PersistentCounter("/drd.txt");
+    counter = nullptr;
   }
 
   /**
@@ -34,19 +34,28 @@ public:
    * @return true if target resets reached.
    */
   bool detect() {
-    if (!LittleFS.begin(true)) {
-      logger.error("[MultiResetDetector] Error: cant initialize LittleFS");
-      return false;
+    if (!LittleFS.begin(false)) {
+        LittleFS.format();
+        if (!LittleFS.begin(false)) {
+            logger.error("[MultiResetDetector] Error: cant initialize LittleFS");
+            return false;
+        }
+        logger.error("[MultiResetDetector] LittleFS formated");
     }
     _initialized = true;
+
+    if (counter == nullptr) {
+        counter = new PersistentCounter("/drd.txt");
+    }
 
     uint8_t currentCount = counter->read();
 
     // If reset was caused by external pin (RST button)
-    if (esp_reset_reason() == ESP_RST_EXT) {
-      currentCount++;
-      logger.info("[MultiResetDetector]: Reset detected (" +
-                  String(currentCount) + "/" + String(_targetResets) + ")");
+    if (esp_reset_reason() == ESP_RST_POWERON || 
+        esp_reset_reason() == ESP_RST_SW) {
+        currentCount++;
+        logger.info("[MultiResetDetector]: Reset detected (" +
+                    String(currentCount) + "/" + String(_targetResets) + ")");
     }
 
     // Check if target reached
