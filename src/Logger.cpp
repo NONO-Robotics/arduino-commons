@@ -1,6 +1,6 @@
 #include "Logger.h"
 
-Logger logger(9600);
+Logger logger(115200);
 
 Logger::Logger(unsigned long baud, LogLevel level)
 {
@@ -19,24 +19,31 @@ void Logger::log(LogLevel level, String msg) {
     switch (level) {
       case TRACE:
         Serial.print("[TRACE] ");
+        Serial.println(msg);
         break;
       case DEBUG:
         Serial.print("[DEBUG] ");
+        Serial.println(msg);
         break;
       case INFO:
         Serial.print("[INFO] ");
+        Serial.println(msg);
         break;
       case WARN:
         Serial.print("[WARN] ");
+        Serial.println(msg);
         break;
       case ERROR:
         Serial.print("[ERROR] ");
+        Serial.println(msg);
         break;
       case FATAL:
         Serial.print("[FATAL] ");
+        Serial.println(msg);
+        break;
+      case OFF:
         break;
     }
-    Serial.println(msg);
   }
 }
 
