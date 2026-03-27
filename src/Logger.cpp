@@ -101,3 +101,7 @@ bool Logger::isError() {
 bool Logger::isFatal() {
     return level <= FATAL;
 }
+
+bool Logger::isOff() {
+    return level == OFF;
+}

@@ -4,7 +4,7 @@
 /**
  * @brief Log levels for the Logger class.
  */
-enum LogLevel { TRACE, DEBUG, INFO, WARN, ERROR, FATAL };
+enum LogLevel { TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF };
 
 /**
  * @brief Simple logging utility with log levels.
@@ -30,6 +30,7 @@ public:
   bool isWarn();
   bool isError();
   bool isFatal();
+  bool isOff();
 
   /**
    * @brief Set the Log Level.
@@ -52,5 +53,5 @@ public:
   void fatal(String msg);
 };
 
-// Declare the logger instance as 'extern'
+// Declare the logger instance as "extern"
 extern Logger logger;
