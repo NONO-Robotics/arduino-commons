@@ -12,6 +12,7 @@ class BLDCMotorController {
 private:
   WToSignedPWMConverter *wConverter;
   BLDCMotor *motor;
+  float factor;
 
 public:
   /**
@@ -22,7 +23,7 @@ public:
    * @param minPwm Minimum PWM value to start movement (deadzone compensation).
    * @param maxPwm Maximum PWM value allowed.
    */
-  BLDCMotorController(BLDCMotor *motor, float maxW, int minPwm, int maxPwm);
+  BLDCMotorController(BLDCMotor *motor, float maxW, int minPwm, int maxPwm, float factor = 1.0);
 
   /**
    * @brief Setup the controller.

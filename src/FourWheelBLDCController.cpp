@@ -5,7 +5,8 @@ FourWheelBLDCController::FourWheelBLDCController(
     int pinDirFrontRight, int pinBrakeFrontRight, int pinPwmFrontLeft,
     int pinDirFrontLeft, int pinBrakeFrontLeft, int pinPwmBackRight,
     int pinDirBackRight, int pinBrakeBackRight, int pinPwmBackLeft,
-    int pinDirBackLeft, int pinBrakeBackLeft) {
+    int pinDirBackLeft, int pinBrakeBackLeft,
+    float frontFactor, float backFactor) {
 
   motorFrontRightController =
       (new BLDCMotorController(
@@ -14,7 +15,7 @@ FourWheelBLDCController::FourWheelBLDCController(
                ->setChannel(0)
                               ->invertDirection()
                ->build(),
-           maxW, minPwm, maxPwm))
+           maxW, minPwm, maxPwm, frontFactor))
           ->setup();
 
   motorFrontLeftController =
@@ -23,7 +24,7 @@ FourWheelBLDCController::FourWheelBLDCController(
                                  pinBrakeFrontLeft))
                ->setChannel(1)
                ->build(),
-           maxW, minPwm, maxPwm))
+           maxW, minPwm, maxPwm, frontFactor))
           ->setup();
 
   motorBackRightController =
@@ -33,7 +34,7 @@ FourWheelBLDCController::FourWheelBLDCController(
                ->setChannel(3)
                ->invertDirection()
                ->build(),
-           maxW, minPwm, maxPwm))
+           maxW, minPwm, maxPwm, backFactor))
           ->setup();
 
   motorBackLeftController =
@@ -42,7 +43,7 @@ FourWheelBLDCController::FourWheelBLDCController(
                                  pinBrakeBackLeft))
                ->setChannel(4)
                ->build(),
-           maxW, minPwm, maxPwm))
+           maxW, minPwm, maxPwm, backFactor))
           ->setup();
 }
 

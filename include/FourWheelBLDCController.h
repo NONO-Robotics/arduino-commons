@@ -42,7 +42,8 @@ public:
                           int pinDirFrontLeft, int pinBrakeFrontLeft,
                           int pinPwmBackRight, int pinDirBackRight,
                           int pinBrakeBackRight, int pinPwmBackLeft,
-                          int pinDirBackLeft, int pinBrakeBackLeft);
+                          int pinDirBackLeft, int pinBrakeBackLeft,
+                          float frontFactor = 1.0, float backFactor = 1.0);
 
   /**
    * @brief Stops all four motors immediately.

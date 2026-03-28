@@ -4,9 +4,11 @@ BLDCMotorController::BLDCMotorController(
     BLDCMotor *motor,
     float maxW,
     int minPwm,
-    int maxPwm)
+    int maxPwm,
+    float factor)
 {
   this->motor = motor;
+  this->factor = factor;
 
   // Creamos el convertidor usando la resolución real del motor
   // (Si configuraste el motor a 11 bits, esto pasará 11 automáticamente)
@@ -29,7 +31,7 @@ BLDCMotorController *BLDCMotorController::setRadsBySegSpeed(float radsBySeg)
   int targetPwm = wConverter->convert(radsBySeg);
 
   // 2. Enviamos al motor
-  motor->setPwmSpeed(targetPwm);
+  motor->setPwmSpeed(int(targetPwm * factor));
   return this;
 };
 
