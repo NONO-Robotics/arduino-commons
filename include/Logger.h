@@ -1,6 +1,17 @@
 #pragma once
 #include <Arduino.h>
 
+#ifdef USE_ROS_LOGGER
+#include <rcl/rcl.h>
+#include <rclc/rclc.h>
+#include <rcutils/logging.h>
+#include <std_msgs/msg/string.h>
+
+static rcl_publisher_t ros_log_publisher;
+static std_msgs__msg__String ros_log_msg;
+static bool ros_publisher_ready = false;
+#endif
+
 enum LogLevel { TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF };
 
 enum LogOutput {

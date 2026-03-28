@@ -1,15 +1,5 @@
 #include "Logger.h"
 
-#ifdef USE_ROS_LOGGER
-#include <rcl/rcl.h>
-#include <rclc/rclc.h>
-#include <std_msgs/msg/string.h>
-
-static rcl_publisher_t ros_log_publisher;
-static std_msgs__msg__String ros_log_msg;
-static bool ros_publisher_ready = false;
-#endif
-
 // ── Instancia global — constructor vacío, sin efectos secundarios ─────────────
 Logger logger;
 
