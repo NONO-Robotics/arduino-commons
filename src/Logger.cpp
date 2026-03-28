@@ -73,9 +73,8 @@ void Logger::fatal(String msg) {
 }
 
 void Logger::debugPlot(String varName, float value) {
-  if (isDebug()) {
-    Serial.println(">" + varName + ":" + String(value)); 
-  }
+  if (isOff()) return;
+  if (isDebug()) Serial.println(">" + varName + ":" + String(value));
 }
 
 bool Logger::isDebug() {
