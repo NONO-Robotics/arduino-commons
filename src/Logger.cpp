@@ -45,12 +45,29 @@ void Logger::printToOutput(const String& prefix, const String& msg)
         case OUTPUT_SERIAL2: Serial2.println(full); break;
         case OUTPUT_ROS:
 #ifdef USE_ROS_LOGGER
-            if (ros_publisher_ready) {
-                ros_log_msg.data.data     = (char*)full.c_str();
-                ros_log_msg.data.size     = full.length();
-                ros_log_msg.data.capacity = full.length() + 1;
-                rcl_publish(&ros_log_publisher, &ros_log_msg, NULL);
-            }
+    if (ros_publisher_ready) {
+        // Nivel según rcl_interfaces/msg/Log
+        switch (this->level) {
+            case TRACE: ros_log_msg.level = rcl_interfaces__msg__Log__DEBUG; break;
+            case DEBUG: ros_log_msg.level = rcl_interfaces__msg__Log__DEBUG; break;
+            case INFO:  ros_log_msg.level = rcl_interfaces__msg__Log__INFO;  break;
+            case WARN:  ros_log_msg.level = rcl_interfaces__msg__Log__WARN;  break;
+            case ERROR: ros_log_msg.level = rcl_interfaces__msg__Log__ERROR; break;
+            case FATAL: ros_log_msg.level = rcl_interfaces__msg__Log__FATAL; break;
+            default:    ros_log_msg.level = rcl_interfaces__msg__Log__INFO;  break;
+        }
+
+        ros_log_msg.msg.data     = (char*)msg.c_str();
+        ros_log_msg.msg.size     = msg.length();
+        ros_log_msg.msg.capacity = msg.length() + 1;
+
+        // Nombre del nodo como "name"
+        ros_log_msg.name.data     = (char*)"esp32";
+        ros_log_msg.name.size     = 5;
+        ros_log_msg.name.capacity = 6;
+
+        rcl_publish(&ros_log_publisher, &ros_log_msg, NULL);
+    }
 #endif
             break;
     }
@@ -102,10 +119,13 @@ bool Logger::isOff()   { return level == OFF;   }
 void Logger::initRosPublisher(rcl_node_t* node, rclc_support_t* support)
 {
     const rosidl_message_type_support_t* type_support =
-        ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, String);
+        ROSIDL_GET_MSG_TYPE_SUPPORT(rcl_interfaces, msg, Log);
 
     rcl_ret_t ret = rclc_publisher_init_default(
-        &ros_log_publisher, node, type_support, "esp32_logs"
+        &ros_log_publisher,
+        node,
+        type_support,
+        "rosout"   // <-- tópico correcto
     );
 
     ros_publisher_ready = (ret == RCL_RET_OK);

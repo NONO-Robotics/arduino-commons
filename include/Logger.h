@@ -4,11 +4,12 @@
 #ifdef USE_ROS_LOGGER
 #include <rcl/rcl.h>
 #include <rclc/rclc.h>
+#include <rcl/error_handling.h>
 #include <rcutils/logging.h>
-#include <std_msgs/msg/string.h>
+#include <rcl_interfaces/msg/log.h>
 
 static rcl_publisher_t ros_log_publisher;
-static std_msgs__msg__String ros_log_msg;
+static rcl_interfaces__msg__Log ros_log_msg;
 static bool ros_publisher_ready = false;
 #endif
 
