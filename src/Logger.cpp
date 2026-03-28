@@ -1,7 +1,6 @@
 #include "Logger.h"
 
 
-
 // ── Instancia global — constructor vacío, sin efectos secundarios ─────────────
 Logger logger;
 
@@ -107,7 +106,7 @@ void Logger::initRosPublisher(rcl_node_t* node, rclc_support_t* support)
         ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, String);
 
     rcl_ret_t ret = rclc_publisher_init_default(
-        &ros_log_publisher, node, type_support, "esp32_logs"
+        &ros_log_publisher, node, type_support, "microrosout"
     );
 
     ros_publisher_ready = (ret == RCL_RET_OK);
