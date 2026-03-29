@@ -47,9 +47,13 @@ void Logger::printToOutput(const String& prefix, const String& msg)
         case OUTPUT_ROS:
 #ifdef USE_ROS_LOGGER
             if (ros_publisher_ready) {
-                ros_log_msg.data.data     = (char*)full.c_str();
-                ros_log_msg.data.size     = full.length();
-                ros_log_msg.data.capacity = full.length() + 1;
+                // Copia segura al buffer pre-asignado
+                size_t len = full.length();
+                if (len > 255) len = 255; 
+                memcpy(ros_log_msg.data.data, full.c_str(), len);
+                ros_log_msg.data.data[len] = '\0';
+                ros_log_msg.data.size = len;
+
                 rcl_publish(&ros_log_publisher, &ros_log_msg, NULL);
             }
 #endif
@@ -107,13 +111,17 @@ void Logger::initRosPublisher(rcl_node_t* node, rclc_support_t* support)
     const rosidl_message_type_support_t* type_support =
         ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, String);
 
-    std_msgs__msg__String__init(&ros_log_msg);
-
-    // Intentamos inicializar con QoS best effort para mayor compatibilidad
-    rcl_ret_t ret = rclc_publisher_init_best_effort(
+    // Usamos el publicador por defecto para asegurar máxima visibilidad en el agente
+    rcl_ret_t ret = rclc_publisher_init_default(
         &ros_log_publisher, node, type_support, "/microrosout"
     );
 
-    ros_publisher_ready = (ret == RCL_RET_OK);
+    if (ret == RCL_RET_OK) {
+        // Reservamos un buffer fijo para evitar problemas de gestión de memoria de micro-ROS
+        ros_log_msg.data.data = (char*) malloc(256);
+        ros_log_msg.data.capacity = 256;
+        ros_log_msg.data.size = 0;
+        ros_publisher_ready = true;
+    }
 }
 #endif
