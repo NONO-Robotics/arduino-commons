@@ -4,6 +4,13 @@
 // ── Instancia global — constructor vacío, sin efectos secundarios ─────────────
 Logger logger;
 
+#ifdef USE_ROS_LOGGER
+static rcl_publisher_t ros_log_publisher;
+static std_msgs__msg__String ros_log_msg;
+static bool ros_publisher_ready = false;
+static char ros_msg_buffer[256]; // Buffer fijo para el mensaje
+#endif
+
 // ── begin() — llamar en setup() ───────────────────────────────────────────────
 void Logger::begin(unsigned long baud, LogLevel level, LogOutput output)
 {
@@ -47,13 +54,16 @@ void Logger::printToOutput(const String& prefix, const String& msg)
         case OUTPUT_ROS:
 #ifdef USE_ROS_LOGGER
             if (ros_publisher_ready) {
-                // Copia segura al buffer pre-asignado
+                // Copia al buffer fijo sin usar malloc
                 size_t len = full.length();
-                if (len > 255) len = 255; 
-                memcpy(ros_log_msg.data.data, full.c_str(), len);
-                ros_log_msg.data.data[len] = '\0';
+                if (len > 255) len = 255;
+                memcpy(ros_msg_buffer, full.c_str(), len);
+                ros_msg_buffer[len] = '\0';
+                
+                ros_log_msg.data.data = ros_msg_buffer;
                 ros_log_msg.data.size = len;
-
+                ros_log_msg.data.capacity = 256;
+                
                 rcl_publish(&ros_log_publisher, &ros_log_msg, NULL);
             }
 #endif
@@ -111,17 +121,11 @@ void Logger::initRosPublisher(rcl_node_t* node, rclc_support_t* support)
     const rosidl_message_type_support_t* type_support =
         ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, String);
 
-    // Usamos el publicador por defecto para asegurar máxima visibilidad en el agente
+    // Volver a usar el nombre del tópico que prefieras, pero con barra inicial /
     rcl_ret_t ret = rclc_publisher_init_default(
         &ros_log_publisher, node, type_support, "/microrosout"
     );
 
-    if (ret == RCL_RET_OK) {
-        // Reservamos un buffer fijo para evitar problemas de gestión de memoria de micro-ROS
-        ros_log_msg.data.data = (char*) malloc(256);
-        ros_log_msg.data.capacity = 256;
-        ros_log_msg.data.size = 0;
-        ros_publisher_ready = true;
-    }
+    ros_publisher_ready = (ret == RCL_RET_OK);
 }
 #endif

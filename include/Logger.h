@@ -22,12 +22,6 @@ private:
     unsigned long baud = 115200;
     bool initialized = false;
 
-#ifdef USE_ROS_LOGGER
-    rcl_publisher_t ros_log_publisher;
-    std_msgs__msg__String ros_log_msg;
-    bool ros_publisher_ready = false;
-#endif
-
     void log(LogLevel level, String msg);
     void printToOutput(const String& prefix, const String& msg);
 
