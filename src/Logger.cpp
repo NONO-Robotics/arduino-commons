@@ -102,11 +102,16 @@ bool Logger::isOff()   { return level == OFF;   }
 #ifdef USE_ROS_LOGGER
 void Logger::initRosPublisher(rcl_node_t* node, rclc_support_t* support)
 {
+    if (ros_publisher_ready) return;
+
     const rosidl_message_type_support_t* type_support =
         ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, String);
 
-    rcl_ret_t ret = rclc_publisher_init_default(
-        &ros_log_publisher, node, type_support, "microrosout"
+    std_msgs__msg__String__init(&ros_log_msg);
+
+    // Intentamos inicializar con QoS best effort para mayor compatibilidad
+    rcl_ret_t ret = rclc_publisher_init_best_effort(
+        &ros_log_publisher, node, type_support, "/microrosout"
     );
 
     ros_publisher_ready = (ret == RCL_RET_OK);

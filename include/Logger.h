@@ -5,10 +5,6 @@
 #include <rcl/rcl.h>
 #include <rclc/rclc.h>
 #include <std_msgs/msg/string.h>
-
-static rcl_publisher_t ros_log_publisher;
-static std_msgs__msg__String ros_log_msg;
-static bool ros_publisher_ready = false;
 #endif
 
 enum LogLevel { TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF };
@@ -25,6 +21,12 @@ private:
     LogOutput output = OUTPUT_SERIAL;
     unsigned long baud = 115200;
     bool initialized = false;
+
+#ifdef USE_ROS_LOGGER
+    rcl_publisher_t ros_log_publisher;
+    std_msgs__msg__String ros_log_msg;
+    bool ros_publisher_ready = false;
+#endif
 
     void log(LogLevel level, String msg);
     void printToOutput(const String& prefix, const String& msg);
