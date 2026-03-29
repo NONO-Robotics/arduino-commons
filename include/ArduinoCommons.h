@@ -26,7 +26,6 @@
 #include "I2CMultiplexor.h"
 #include "IMUData.h"
 #include "IMUSensor.h"
-#include "Logger.h"
 #include "MagneticEncoder.h"
 #include "MagneticEncoderBuilder.h"
 #include "MultiResetDetector.h"
