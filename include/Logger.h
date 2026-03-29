@@ -2,9 +2,7 @@
 #include <Arduino.h>
 
 #ifdef USE_ROS_LOGGER
-#include <rcl/rcl.h>
-#include <rclc/rclc.h>
-#include <std_msgs/msg/string.h>
+#include <StringPublisher.h>
 #endif
 
 enum LogLevel { TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF };
@@ -16,15 +14,6 @@ enum LogOutput {
 };
 
 class Logger {
-private:
-    LogLevel  level  = INFO;
-    LogOutput output = OUTPUT_SERIAL;
-    unsigned long baud = 115200;
-    bool initialized = false;
-
-    void log(LogLevel level, String msg);
-    void printToOutput(const String& prefix, const String& msg);
-
 public:
     /**
      * @brief Constructor vacío — no hace nada.
@@ -61,6 +50,19 @@ public:
 #ifdef USE_ROS_LOGGER
     void initRosPublisher(rcl_node_t* node, rclc_support_t* support);
 #endif
+
+private:
+    LogLevel  level  = INFO;
+    LogOutput output = OUTPUT_SERIAL;
+    unsigned long baud = 115200;
+    bool initialized = false;
+
+#ifdef USE_ROS_LOGGER
+    StringPublisher* ros_log_publisher = nullptr;
+#endif
+
+    void log(LogLevel level, String msg);
+    void printToOutput(const String& prefix, const String& msg);
 };
 
 extern Logger logger;

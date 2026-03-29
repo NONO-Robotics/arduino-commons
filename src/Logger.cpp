@@ -1,15 +1,7 @@
 #include "Logger.h"
 
-
 // ── Instancia global — constructor vacío, sin efectos secundarios ─────────────
 Logger logger;
-
-#ifdef USE_ROS_LOGGER
-static rcl_publisher_t ros_log_publisher;
-static std_msgs__msg__String ros_log_msg;
-static bool ros_publisher_ready = false;
-static char ros_msg_buffer[256]; // Buffer fijo para el mensaje
-#endif
 
 // ── begin() — llamar en setup() ───────────────────────────────────────────────
 void Logger::begin(unsigned long baud, LogLevel level, LogOutput output)
@@ -53,18 +45,8 @@ void Logger::printToOutput(const String& prefix, const String& msg)
         case OUTPUT_SERIAL2: Serial2.println(full); break;
         case OUTPUT_ROS:
 #ifdef USE_ROS_LOGGER
-            if (ros_publisher_ready) {
-                // Copia al buffer fijo sin usar malloc
-                size_t len = full.length();
-                if (len > 255) len = 255;
-                memcpy(ros_msg_buffer, full.c_str(), len);
-                ros_msg_buffer[len] = '\0';
-                
-                ros_log_msg.data.data = ros_msg_buffer;
-                ros_log_msg.data.size = len;
-                ros_log_msg.data.capacity = 256;
-                
-                rcl_publish(&ros_log_publisher, &ros_log_msg, NULL);
+            if (ros_log_publisher) {
+                ros_log_publisher->publish(full);
             }
 #endif
             break;
@@ -114,18 +96,14 @@ bool Logger::isOff()   { return level == OFF;   }
 
 // ── Init ROS publisher ────────────────────────────────────────────────────────
 #ifdef USE_ROS_LOGGER
+#include <MicroRosPublisher.h>
+
 void Logger::initRosPublisher(rcl_node_t* node, rclc_support_t* support)
 {
-    if (ros_publisher_ready) return;
+    if (ros_log_publisher) return;
 
-    const rosidl_message_type_support_t* type_support =
-        ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, String);
-
-    // Volver a usar el nombre del tópico que prefieras, pero con barra inicial /
-    rcl_ret_t ret = rclc_publisher_init_default(
-        &ros_log_publisher, node, type_support, "/microrosout"
+    ros_log_publisher = new StringPublisher(
+        MicroRosPublisher::createString(node, "/microrosout")
     );
-
-    ros_publisher_ready = (ret == RCL_RET_OK);
 }
 #endif
