@@ -33,11 +33,14 @@ This library is part of the **4w-ros-robot** project family.
       * [4w-robot-ros-w-publisher](https://github.com/adrianmarino/4w-robot-ros-w-publisher): Wheels angular velocity sensors publisher firmware.
       * [4w-robot-ros-imu-gps](https://github.com/adrianmarino/4w-ros-robot-imu-gps): IMU, GPS sensors publisher firmware.
   * **Outdoor**
+    * [4w-robot-cutting-control](https://github.com/adrianmarino/4w-robot-cutting-control): Automatic cutting motor contoller.
     * **Navigation**
       * [4w-outdoor-robot-ros-ws](https://github.com/adrianmarino/4w-outdoor-robot-ros-ws): Autonomous/manual navigation control project.
       * [4w-outdoor-robot-ros-movement](https://github.com/adrianmarino/4w-outdoor-robot-ros-movement.git): Outdoor Movement controller firmware.
     * **Sensor data publisher firmware**
       * [4w-outdoor-robot-ros-w-publisher](https://github.com/adrianmarino/4w-outdoor-robot-ros-w-publisher): Outdoor wheels angular velocity sensors publisher firmware.
+      * [4w-outdoor-robot-ros-imu-gps](https://github.com/adrianmarino/4w-outdoor-ros-robot-imu-gps): IMU, GPS sensors publisher firmware.
+
 
 
 ## 🚀 Installation
