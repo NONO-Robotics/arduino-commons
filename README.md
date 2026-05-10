@@ -65,6 +65,28 @@ lib_deps =
 
 ### 🚗 Motors
 
+#### `FourWheelBLDCController` & `BLDCMotorController`
+High-level controllers for 4-wheel bases and single BLDC motors, handling angular velocities and PWM translation.
+
+```cpp
+#include <FourWheelBLDCController.h>
+
+FourWheelBLDCController* baseController;
+
+void setup() {
+    baseController = new FourWheelBLDCController(
+        10.0, 50, 255,   // maxW, minPwm, maxPwm
+        1, 2, 3,         // FR pins
+        4, 5, 6,         // FL pins
+        7, 8, 9,         // BR pins
+        10, 11, 12       // BL pins
+    );
+    // Control base with rad/s
+    FourWheelAngularSpeed speeds = {2.5, 2.5, 2.5, 2.5};
+    baseController->applySpeed(speeds);
+}
+```
+
 #### `BLDCMotor` & `BLDCMotorBuilder`
 Control Brushless DC motors with PWM, direction, and brake support.
 
@@ -108,6 +130,33 @@ void setup() {
 ---
 
 ### 📡 Sensors
+
+#### `AS5600Sensor` & `MagneticEncoderUpdateService` & `EncoderAngularVelocityEstimator`
+Direct I2C interface for AS5600, service builder for multiplexed encoders, and angular velocity estimation.
+
+```cpp
+#include <MagneticEncoderUpdateServiceBuilder.h>
+#include <EncoderAngularVelocityEstimator.h>
+
+MagneticEncoderUpdateService* encoderService;
+
+void onEncoderUpdate(short int channel, int step, float w) {
+    Serial.printf("Ch %d speed: %f\n", channel, w);
+}
+
+void setup() {
+    Wire.begin();
+    encoderService = MagneticEncoderUpdateServiceBuilder(4, 0x70)
+                        .addEncoder(onEncoderUpdate, 0)
+                        .addEncoder(onEncoderUpdate, 1)
+                        .build();
+    encoderService->begin();
+}
+
+void loop() {
+    encoderService->update();
+}
+```
 
 #### `GPSSensor`
 Wrapper for serial GPS modules, utilizing callbacks for non-blocking updates.
@@ -208,6 +257,33 @@ void loop() {
 ---
 
 ### 🛠 Utilities
+
+#### `WToSignedPWMConverter`
+Converts physical angular limits into PWM duty cycle ranges.
+
+```cpp
+#include <WToSignedPWMConverter.h>
+
+WToSignedPWMConverter converter(10.0, 11, 50); // maxW=10, 11-bit res, minPwm=50
+
+void setup() {
+    int pwm = converter.convert(5.0); // Converts 5.0 rad/s to PWM
+}
+```
+
+#### `PersistentCounter`
+Stores a simple counter value in LittleFS.
+
+```cpp
+#include <PersistentCounter.h>
+
+PersistentCounter counter("/reboots.txt");
+
+void setup() {
+    int count = counter.read();
+    counter.save(count + 1);
+}
+```
 
 #### `Logger`
 Simple logging utility with multiple log levels (TRACE, DEBUG, INFO, WARN, ERROR, FATAL).

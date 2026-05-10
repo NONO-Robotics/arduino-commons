@@ -27,7 +27,7 @@ public:
         uint8_t currentCount = 0;
 
         if (!LittleFS.exists(path)) {
-            save(0); // Crear archivo silenciosamente
+            save(0); // Create file silently
             return 0;
         }
 
