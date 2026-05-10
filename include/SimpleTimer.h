@@ -4,6 +4,10 @@
 /**
  * @brief Class to execute a function (closure/lambda) periodically
  * within the main loop, without using FreeRTOS tasks.
+ * 
+ * Usage Context: Used across sensor nodes (e.g. IMU/GPS) to poll
+ * sensors at specific, decoupled intervals asynchronously, keeping 
+ * the main Arduino `loop()` running at high frequency.
  */
 class SimpleTimer {
 public:

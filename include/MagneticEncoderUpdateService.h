@@ -9,6 +9,11 @@
  *
  * This class abstracts the process of selecting the correct I2C channel
  * on a multiplexor and updating each connected magnetic encoder.
+ * 
+ * Usage Context: Since AS5600 sensors have a fixed hardware I2C address,
+ * it's physically impossible to connect four of them to the same bus directly.
+ * This service works with an I2C Multiplexor (e.g., TCA9548A) to rapidly poll
+ * all 4 wheels in the wheel-publisher nodes.
  */
 class MagneticEncoderUpdateService
 {

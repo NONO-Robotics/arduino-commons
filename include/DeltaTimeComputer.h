@@ -9,6 +9,10 @@ typedef void (*OnDeltaTimeReachedEvent)();
  *
  * This class provides methods to calculate the time difference between
  * consecutive updates, allowing for precise timing in applications.
+ * 
+ * Usage Context: Crucial for kinematics and odometry (e.g. integrating
+ * velocity to position over time). Provides accurate `dt` measurement
+ * between loop iterations to ensure mathematics mirror physical reality.
  */
 class DeltaTimeComputer
 {

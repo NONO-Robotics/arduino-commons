@@ -3,6 +3,10 @@
 
 /**
  * @brief Converts robot physical limits and PWM resolution into control values.
+ * 
+ * Usage Context: Bridges the gap between kinematic mathematics (rad/s) and
+ * the physical motors' PWM. Handles constraints such as motor deadzones 
+ * (minimum PWM required to move) and maximum limits to protect hardware.
  */
 class WToSignedPWMConverter {
 private:

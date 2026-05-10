@@ -67,6 +67,7 @@ lib_deps =
 
 #### `FourWheelBLDCController` & `BLDCMotorController`
 High-level controllers for 4-wheel bases and single BLDC motors, handling angular velocities and PWM translation.
+* **Usage Context**: `FourWheelBLDCController` acts as the central controller in outdoor/4x4 independent drive robots (e.g. `4w-outdoor-robot-ros-movement`). It receives target wheel speeds (calculated from ROS Twist messages via kinematic equations) and applies them simultaneously to all four wheels.
 
 ```cpp
 #include <FourWheelBLDCController.h>
@@ -131,8 +132,11 @@ void setup() {
 
 ### 📡 Sensors
 
-#### `AS5600Sensor` & `MagneticEncoderUpdateService` & `EncoderAngularVelocityEstimator`
+#### `AS5600Sensor`, `MagneticEncoderUpdateService` & `EncoderAngularVelocityEstimator`
 Direct I2C interface for AS5600, service builder for multiplexed encoders, and angular velocity estimation.
+* **Usage Context**: 
+  * `MagneticEncoderUpdateService`: Since AS5600 sensors have a fixed physical I2C address, it's impossible to connect four of them directly to the same bus. This service works with an I2C Multiplexor (e.g., TCA9548A) to rapidly poll all 4 wheels in the wheel-publisher nodes.
+  * `EncoderAngularVelocityEstimator`: Essential for processing noisy raw data from magnetic encoders. It implements an Exponentially Weighted Moving Average (EWMA) filter to smooth out spikes and provide stable velocity estimates (rad/s) for reliable odometry calculation.
 
 ```cpp
 #include <MagneticEncoderUpdateServiceBuilder.h>
@@ -260,6 +264,7 @@ void loop() {
 
 #### `WToSignedPWMConverter`
 Converts physical angular limits into PWM duty cycle ranges.
+* **Usage Context**: Bridges the gap between kinematic mathematics (rad/s) and the physical motors' PWM. Handles constraints such as motor deadzones (the minimum PWM required to break static friction) and maximum PWM limits to protect hardware.
 
 ```cpp
 #include <WToSignedPWMConverter.h>
@@ -350,6 +355,7 @@ void loop() {
 
 #### `SimpleTimer`
 Execute tasks periodically without blocking `loop()`.
+* **Usage Context**: Used across sensor nodes (e.g., IMU/GPS) to poll sensors at specific, decoupled intervals asynchronously. This avoids using `delay()` and keeps the main Arduino `loop()` running at high frequency to quickly process incoming ROS messages.
 
 ```cpp
 #include <SimpleTimer.h>
@@ -380,6 +386,7 @@ void setup() {
 
 #### `DeltaTimeComputer`
 Calculates high-precision `dt` for valid integration in control loops.
+* **Usage Context**: Crucial for kinematics and odometry (e.g., integrating velocity to calculate position over time). Provides accurate `dt` measurement between loop iterations to ensure mathematical calculations accurately mirror physical reality.
 
 ```cpp
 #include <DeltaTimeComputer.h>

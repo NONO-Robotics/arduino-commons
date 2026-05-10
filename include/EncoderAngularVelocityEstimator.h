@@ -8,6 +8,12 @@ const float DEFAULT_DEAD_ZONE = 0.55;
 
 /**
  * @brief Calculates angular velocity from encoder steps over time.
+ * 
+ * Usage Context: Essential for processing noisy raw data from AS5600 
+ * magnetic encoders (e.g., in 4w-outdoor-robot-ros-w-publisher).
+ * Implements an Exponentially Weighted Moving Average (EWMA) filter
+ * to smooth out spikes and provide stable velocity estimates (rad/s)
+ * for reliable odometry calculation.
  */
 class EncoderAngularVelocityEstimator {
 

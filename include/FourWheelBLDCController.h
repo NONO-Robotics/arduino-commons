@@ -8,6 +8,11 @@
  *
  * This class coordinates four BLDC motors (Front-Left, Front-Right, Back-Left,
  * Back-Right) to achieve desired angular velocities for the robot base.
+ * 
+ * Usage Context: Central controller in outdoor/4x4 independent drive robots
+ * (e.g. 4w-outdoor-robot-ros-movement). It receives target wheel speeds
+ * (calculated from Twist messages via FWAngularSpeedWriter) and applies them
+ * simultaneously to all four wheels.
  */
 class FourWheelBLDCController {
 private:
