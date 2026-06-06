@@ -14,7 +14,7 @@ double GPSData::getAltitude() { return data.altitude.meters(); }
 
 int GPSData::getSatellites() { return data.satellites.value(); }
 
-// Devuelve el HDOP (Horizontal Dilution of Precision) para covarianza
+// Returns the HDOP (Horizontal Dilution of Precision) for covariance
 double GPSData::getHDOP() {
   return data.hdop.isValid() ? data.hdop.value() : 99.0;
 }

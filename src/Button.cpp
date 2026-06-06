@@ -15,7 +15,7 @@ bool Button::pressed()
     if (currentState != previousState && (millis() - lastDebounceTime) > debounceTime)
     {
         if (currentState == LOW)
-        { // El botón BOOT conecta a GND
+        { // The BOOT button connects to GND
             result = true;
         }
         lastDebounceTime = millis();

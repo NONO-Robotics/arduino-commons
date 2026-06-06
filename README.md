@@ -23,7 +23,7 @@ This library is part of the **4w-ros-robot** project family.
     * [arduino-ros](https://github.com/adrianmarino/arduino-ros): ROS common library.
     * [arduino-commons](https://github.com/adrianmarino/arduino-commons): Arduino common library.
   * **Design**
-    * [4w-robot-ros-kicad](https://github.com/adrianmarino/4w-robot-ros-kicad) PCB's Design.
+    * [4w-robot-ros-kicad](https://github.com/adrianmarino/4w-robot-ros-kicad) PCB Design.
     * [Solidworks Model](https://drive.google.com/drive/folders/1mQg-BSRZyyYhnBoig6Qm0Zf43U8bTAA7?usp=sharing): 3D model design.
   * **Indoor**
     * **Navigation**
@@ -33,7 +33,7 @@ This library is part of the **4w-ros-robot** project family.
       * [4w-robot-ros-w-publisher](https://github.com/adrianmarino/4w-robot-ros-w-publisher): Wheels angular velocity sensors publisher firmware.
       * [4w-robot-ros-imu-gps](https://github.com/adrianmarino/4w-ros-robot-imu-gps): IMU, GPS sensors publisher firmware.
   * **Outdoor**
-    * [4w-robot-cutting-control](https://github.com/adrianmarino/4w-robot-cutting-control): Automatic cutting motor contoller.
+    * [4w-robot-cutting-control](https://github.com/adrianmarino/4w-robot-cutting-control): Automatic cutting motor controller.
     * **Navigation**
       * [4w-outdoor-robot-ros-ws](https://github.com/adrianmarino/4w-outdoor-robot-ros-ws): Autonomous/manual navigation control project.
       * [4w-outdoor-robot-ros-movement](https://github.com/adrianmarino/4w-outdoor-robot-ros-movement.git): Outdoor Movement controller firmware.
@@ -83,7 +83,8 @@ void setup() {
         10, 11, 12       // BL pins
     );
     // Control base with rad/s
-    FourWheelAngularSpeed speeds = {2.5, 2.5, 2.5, 2.5};
+    FourWheelAngularSpeed speeds;
+    speeds.updateFrom(2.5, 2.5, 2.5, 2.5);
     baseController->applySpeed(speeds);
 }
 ```
@@ -98,11 +99,11 @@ BLDCMotor* motor;
 
 void setup() {
     // Fluent builder pattern for easy configuration
-    motor = BLDCMotorBuilder(5, 18, 19) // PWM, DIR, BRAKE pins
-                .setChannel(0)
-                .setFrequency(20000)
-                .setResolutionInBits(11)
-                .build();
+    motor = (new BLDCMotorBuilder(5, 18, 19)) // PWM, DIR, BRAKE pins
+                ->setChannel(0)
+                ->setFrequency(20000)
+                ->setResolutionInBits(11)
+                ->build();
 
     motor->setup();
     motor->setPwmSpeed(500); // Set speed

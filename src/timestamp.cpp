@@ -3,23 +3,23 @@
 
 void syncClockTimeStamp(const long utcOffsetInSeconds)
 {
-  // Inicializa la configuración de tiempo. El segundo parámetro es el horario de verano.
-  // Si no usas horario de verano, déjalo en 0.
+  // Initialize the time configuration. The second parameter is daylight saving time.
+  // If you don't use daylight saving time, leave it at 0.
   configTime(
       utcOffsetInSeconds,
       0,
       "pool.ntp.org",
-      "time.nist.gov" // Segundo servidor opcional para redundancia
+      "time.nist.gov" // Optional second server for redundancy
   );
 
-  // Esperar a que el tiempo NTP se sincronice.
-  // La función 'time(nullptr)' devuelve un timestamp Unix. Un valor válido es un número grande (> 10^9).
-  // Si el tiempo no se sincroniza (por ejemplo, no hay internet), el bucle se podría quedar colgado.
-  // Asegúrate de que el ESP32 tenga conexión a Internet para acceder al servidor NTP.
+  // Wait for NTP time to synchronize.
+  // The function 'time(nullptr)' returns a Unix timestamp. A valid value is a large number (> 10^9).
+  // If time does not synchronize (e.g. no internet), the loop could hang.
+  // Make sure the ESP32 has an internet connection to access the NTP server.
   logger.info("Waiting for NTP time synchronization");
   time_t now = 0;
   while (now < 1000000000)
-  { // Un timestamp Unix válido es > 10^9 segundos
+  { // A valid Unix timestamp is > 10^9 seconds
     now = time(nullptr);
     delay(100);
     Serial.print(".");

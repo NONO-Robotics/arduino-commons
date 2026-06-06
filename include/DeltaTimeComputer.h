@@ -67,6 +67,11 @@ public:
    */
   bool hasBeenReached(unsigned int deltaParam);
 
+  /**
+   * @brief Update the current time and trigger the event if the configured delta time has been reached.
+   *
+   * @param event The callback function to execute when the delta time is reached.
+   */
   void update(OnDeltaTimeReachedEvent event);
 
   /**

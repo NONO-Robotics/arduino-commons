@@ -10,8 +10,8 @@ BLDCMotorController::BLDCMotorController(
   this->motor = motor;
   this->factor = factor;
 
-  // Creamos el convertidor usando la resolución real del motor
-  // (Si configuraste el motor a 11 bits, esto pasará 11 automáticamente)
+  // Create the converter using the actual resolution of the motor
+  // (If you configured the motor to 11 bits, this will pass 11 automatically)
   this->wConverter = new WToSignedPWMConverter(
       maxW,
       motor->getResolutionInBits(),
@@ -27,15 +27,15 @@ BLDCMotorController *BLDCMotorController::setup()
 
 BLDCMotorController *BLDCMotorController::setRadsBySegSpeed(float radsBySeg)
 {
-  // 1. Convertimos float (rad/s) -> int (PWM de alta resolución)
+  // 1. Convert float (rad/s) -> int (high resolution PWM)
   int targetPwm = wConverter->convert(radsBySeg);
 
-  // 2. Enviamos al motor
+  // 2. Send to the motor
   motor->setPwmSpeed(int(targetPwm * factor));
   return this;
 };
 
-// Control directo por PWM (útil para pruebas)
+// Direct PWM control (useful for testing)
 BLDCMotorController *BLDCMotorController::setPwmSpeed(int value)
 {
   motor->setPwmSpeed(value);
