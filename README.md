@@ -38,6 +38,7 @@ This project is part of the **4w-ros-robot** family:
       * [4w-robot-ros-w-publisher](https://github.com/adrianmarino/4w-robot-ros-w-publisher): Wheels angular velocity sensors publisher firmware.
       * [4w-robot-ros-imu-gps](https://github.com/adrianmarino/4w-ros-robot-imu-gps): IMU, GPS sensors publisher firmware.
   * **Outdoor**
+    * [mowbot-connect](https://github.com/adrianmarino/mowbot-connect): Real-time Web Control HUD and management application.
     * [4w-robot-cutting-control](https://github.com/adrianmarino/4w-robot-cutting-control): Automatic cutting motor controller.
     * **Navigation**
       * [4w-outdoor-robot-ros-ws](https://github.com/adrianmarino/4w-outdoor-robot-ros-ws): Autonomous/manual navigation control project.
