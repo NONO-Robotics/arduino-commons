@@ -62,14 +62,14 @@ BLDCMotor *BLDCMotor::setPwmSpeed(int speed) {
 }
 
 BLDCMotor *BLDCMotor::brake() {
-  digitalWrite(brakePin, HIGH); // Activate physical brake
+  digitalWrite(brakePin, LOW);  // Activate physical brake (Active-Low)
   ledcWrite(channel, 0);        // Ensure PWM is 0
   this->currentSpeed = 0;
   return this;
 }
 
 BLDCMotor *BLDCMotor::releaseBrake() {
-  digitalWrite(brakePin, LOW); // Release brake
+  digitalWrite(brakePin, HIGH); // Release brake (Active-Low)
   // Do not write PWM here, wait for the next setPwmSpeed call
   return this;
 }
