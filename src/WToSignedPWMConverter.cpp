@@ -24,7 +24,7 @@ WToSignedPWMConverter::WToSignedPWMConverter(
 
 int WToSignedPWMConverter::convert(float w) {
   // Absolute software deadzone (zero noise)
-  if (abs(w) < 0.01)
+  if (abs(w) < 0.002)
     return 0;
 
   // Mapping calculation with floating point arithmetic for precision
