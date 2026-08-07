@@ -1,4 +1,5 @@
 #include "BLDCMotor.h"
+#include <esp_arduino_version.h>
 
 // Constructor
 BLDCMotor::BLDCMotor(int pwmPin, int dirPin, int brakePin, int resolutionInBits,
@@ -17,9 +18,14 @@ BLDCMotor *BLDCMotor::setup() {
   pinMode(dirPin, OUTPUT);
   pinMode(brakePin, OUTPUT);
 
+#if defined(ESP_ARDUINO_VERSION) && ESP_ARDUINO_VERSION >= ESP_ARDUINO_VERSION_VAL(3, 0, 0)
+  // Configure PWM using ESP32 LEDC (Core v3.x compatible)
+  ledcAttach(pwmPin, frequency, resolutionInBits);
+#else
   // Configure PWM using ESP32 LEDC (Core v2.x compatible)
   ledcSetup(channel, frequency, resolutionInBits);
   ledcAttachPin(pwmPin, channel);
+#endif
 
   // Calculate maximum PWM value based on resolution (2^bits - 1)
   pwmMax = (1 << resolutionInBits) - 1;
@@ -37,7 +43,11 @@ BLDCMotor *BLDCMotor::setPwmSpeed(int speed) {
 
   // 1. Zero Speed Case
   if (speed == 0) {
+#if defined(ESP_ARDUINO_VERSION) && ESP_ARDUINO_VERSION >= ESP_ARDUINO_VERSION_VAL(3, 0, 0)
+    ledcWrite(pwmPin, 0);
+#else
     ledcWrite(channel, 0);
+#endif
     this->currentSpeed = 0;
     return this; // Do not activate physical brake here, only inertia
   }
@@ -55,7 +65,11 @@ BLDCMotor *BLDCMotor::setPwmSpeed(int speed) {
 
   // 3. PWM Write (ONLY ledcWrite)
   // Use abs() because PWM duty cycle is always positive
+#if defined(ESP_ARDUINO_VERSION) && ESP_ARDUINO_VERSION >= ESP_ARDUINO_VERSION_VAL(3, 0, 0)
+  ledcWrite(pwmPin, abs(speed));
+#else
   ledcWrite(channel, abs(speed));
+#endif
 
   this->currentSpeed = speed;
   return this;
@@ -63,7 +77,11 @@ BLDCMotor *BLDCMotor::setPwmSpeed(int speed) {
 
 BLDCMotor *BLDCMotor::brake() {
   digitalWrite(brakePin, HIGH); // Activate physical brake
+#if defined(ESP_ARDUINO_VERSION) && ESP_ARDUINO_VERSION >= ESP_ARDUINO_VERSION_VAL(3, 0, 0)
+  ledcWrite(pwmPin, 0);        // Ensure PWM is 0
+#else
   ledcWrite(channel, 0);        // Ensure PWM is 0
+#endif
   this->currentSpeed = 0;
   return this;
 }
@@ -78,4 +96,4 @@ BLDCMotor *BLDCMotor::stop() {
   // Stop simply activates the brake without waiting time
   this->brake();
   return this;
-};
+}
