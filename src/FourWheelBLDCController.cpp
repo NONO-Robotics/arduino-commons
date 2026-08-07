@@ -13,7 +13,8 @@ FourWheelBLDCController::FourWheelBLDCController(
            (new BLDCMotorBuilder(pinPwmFrontRight, pinDirFrontRight,
                                  pinBrakeFrontRight))
                ->setChannel(0)
-                              ->invertDirection()
+               ->setResolutionInBits(8)
+               ->invertDirection()
                ->build(),
            maxW, minPwm, maxPwm, frontFactor))
           ->setup();
@@ -23,6 +24,7 @@ FourWheelBLDCController::FourWheelBLDCController(
            (new BLDCMotorBuilder(pinPwmFrontLeft, pinDirFrontLeft,
                                  pinBrakeFrontLeft))
                ->setChannel(1)
+               ->setResolutionInBits(8)
                ->build(),
            maxW, minPwm, maxPwm, frontFactor))
           ->setup();
@@ -32,6 +34,7 @@ FourWheelBLDCController::FourWheelBLDCController(
            (new BLDCMotorBuilder(pinPwmBackRight, pinDirBackRight,
                                  pinBrakeBackRight))
                ->setChannel(3)
+               ->setResolutionInBits(8)
                ->invertDirection()
                ->build(),
            maxW, minPwm, maxPwm, backFactor))
@@ -42,6 +45,7 @@ FourWheelBLDCController::FourWheelBLDCController(
            (new BLDCMotorBuilder(pinPwmBackLeft, pinDirBackLeft,
                                  pinBrakeBackLeft))
                ->setChannel(4)
+               ->setResolutionInBits(8)
                ->build(),
            maxW, minPwm, maxPwm, backFactor))
           ->setup();
