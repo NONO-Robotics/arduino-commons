@@ -40,7 +40,7 @@ bool IMUSensor::init()
     }
     logger.info("IMU sensor found.");
 
-    if (!sensor.enableReport(SH2_ROTATION_VECTOR, rotationVectorIntervalinUs))
+    if (!sensor.enableReport(SH2_GAME_ROTATION_VECTOR, rotationVectorIntervalinUs))
     {
         logger.error("Cant enable rotation vector.");
         return false;
@@ -79,7 +79,7 @@ bool IMUSensor::update()
 
 IMUData *IMUSensor::getValue()
 {
-    if (value.sensorId == SH2_ROTATION_VECTOR)
+    if (value.sensorId == SH2_GAME_ROTATION_VECTOR)
     {
         imuData.setOrientation(
             value.un.rotationVector.real,
