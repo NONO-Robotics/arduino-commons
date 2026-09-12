@@ -47,12 +47,15 @@ bool IMUSensor::init()
     }
     logger.info("IMU sensor: Rotation vector enable.");
 
-    if (!sensor.enableReport(SH2_LINEAR_ACCELERATION, linearAccelerationIntervalinUs))
+    if (linearAccelerationIntervalinUs > 0)
     {
-        logger.error("Cant enable linear acceleration.");
-        return false;
+        if (!sensor.enableReport(SH2_LINEAR_ACCELERATION, linearAccelerationIntervalinUs))
+        {
+            logger.error("Cant enable linear acceleration.");
+            return false;
+        }
+        logger.info("IMU sensor: Linear acceleration enable.");
     }
-    logger.info("IMU sensor: Linear acceleration enable.");
 
     if (!sensor.enableReport(SH2_GYROSCOPE_CALIBRATED, gyroscopeIntervalinUs))
     {
