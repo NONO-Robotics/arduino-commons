@@ -34,7 +34,19 @@ public:
    * @param threshold Maximum exclusive wheel speed magnitude in rad/s.
    * @return True when all four wheel speed magnitudes are strictly below the threshold.
    */
-  bool isBelowMagnitude(float threshold) const;
+  bool lessThan(float threshold) const;
+
+  /**
+   * @brief Get average angular speed of left-side wheels in rad/s.
+   * @return Signed arithmetic average of front-left and back-left wheel speeds in rad/s.
+   */
+  float getAverageLeftWInRad() const;
+
+  /**
+   * @brief Get average angular speed of right-side wheels in rad/s.
+   * @return Signed arithmetic average of front-right and back-right wheel speeds in rad/s.
+   */
+  float getAverageRightWInRad() const;
 
   /**
    * @brief Get front left wheel speed in rad/s.

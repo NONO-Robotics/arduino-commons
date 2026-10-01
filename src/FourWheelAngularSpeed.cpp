@@ -10,9 +10,17 @@ void FourWheelAngularSpeed::updateFrom(float fl, float fr, float bl, float br) {
   this->br = br;
 }
 
-bool FourWheelAngularSpeed::isBelowMagnitude(float threshold) const {
+bool FourWheelAngularSpeed::lessThan(float threshold) const {
   return fabs(fl) < threshold && fabs(fr) < threshold &&
          fabs(bl) < threshold && fabs(br) < threshold;
+}
+
+float FourWheelAngularSpeed::getAverageLeftWInRad() const {
+  return (fl + bl) / 2.0F;
+}
+
+float FourWheelAngularSpeed::getAverageRightWInRad() const {
+  return (fr + br) / 2.0F;
 }
 
 float FourWheelAngularSpeed::getFlWInRad() const { return fl; }
