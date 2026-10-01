@@ -30,6 +30,13 @@ public:
   void updateFrom(float fl, float fr, float bl, float br);
 
   /**
+   * @brief Check whether every wheel speed magnitude is below a threshold.
+   * @param threshold Maximum exclusive wheel speed magnitude in rad/s.
+   * @return True when all four wheel speed magnitudes are strictly below the threshold.
+   */
+  bool isBelowMagnitude(float threshold) const;
+
+  /**
    * @brief Get front left wheel speed in rad/s.
    * @return Front left wheel speed in rad/s.
    */

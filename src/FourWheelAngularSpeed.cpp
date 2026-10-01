@@ -1,4 +1,5 @@
 #include "FourWheelAngularSpeed.h"
+#include <math.h>
 
 FourWheelAngularSpeed::FourWheelAngularSpeed() : fl(0), fr(0), bl(0), br(0) {}
 
@@ -7,6 +8,11 @@ void FourWheelAngularSpeed::updateFrom(float fl, float fr, float bl, float br) {
   this->fr = fr;
   this->bl = bl;
   this->br = br;
+}
+
+bool FourWheelAngularSpeed::isBelowMagnitude(float threshold) const {
+  return fabs(fl) < threshold && fabs(fr) < threshold &&
+         fabs(bl) < threshold && fabs(br) < threshold;
 }
 
 float FourWheelAngularSpeed::getFlWInRad() const { return fl; }
