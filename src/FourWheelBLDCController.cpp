@@ -1,54 +1,27 @@
 #include "FourWheelBLDCController.h"
 
+namespace {
+BLDCMotorController *buildController(const BLDCMotorSettings &settings) {
+  BLDCMotorBuilder *builder = new BLDCMotorBuilder(
+      settings.pwmPin, settings.directionPin, settings.brakePin);
+  builder->setChannel(settings.pwmChannel)->setResolutionInBits(8);
+  if (settings.invertDirection) {
+    builder->invertDirection();
+  }
+  return (new BLDCMotorController(builder->build(), settings.maxW,
+                                  settings.minPwm, settings.maxPwm,
+                                  settings.factor))
+      ->setup();
+}
+}  // namespace
+
 FourWheelBLDCController::FourWheelBLDCController(
-    float maxW, int minPwm, int maxPwm, int pinPwmFrontRight,
-    int pinDirFrontRight, int pinBrakeFrontRight, int pinPwmFrontLeft,
-    int pinDirFrontLeft, int pinBrakeFrontLeft, int pinPwmBackRight,
-    int pinDirBackRight, int pinBrakeBackRight, int pinPwmBackLeft,
-    int pinDirBackLeft, int pinBrakeBackLeft,
-    float frontFactor, float backFactor) {
-
-  motorFrontRightController =
-      (new BLDCMotorController(
-           (new BLDCMotorBuilder(pinPwmFrontRight, pinDirFrontRight,
-                                 pinBrakeFrontRight))
-               ->setChannel(0)
-               ->setResolutionInBits(8)
-               ->invertDirection()
-               ->build(),
-           maxW, minPwm, maxPwm, frontFactor))
-          ->setup();
-
-  motorFrontLeftController =
-      (new BLDCMotorController(
-           (new BLDCMotorBuilder(pinPwmFrontLeft, pinDirFrontLeft,
-                                 pinBrakeFrontLeft))
-               ->setChannel(1)
-               ->setResolutionInBits(8)
-               ->build(),
-           maxW, minPwm, maxPwm, frontFactor))
-          ->setup();
-
-  motorBackRightController =
-      (new BLDCMotorController(
-           (new BLDCMotorBuilder(pinPwmBackRight, pinDirBackRight,
-                                 pinBrakeBackRight))
-               ->setChannel(3)
-               ->setResolutionInBits(8)
-               ->invertDirection()
-               ->build(),
-           maxW, minPwm, maxPwm, backFactor))
-          ->setup();
-
-  motorBackLeftController =
-      (new BLDCMotorController(
-           (new BLDCMotorBuilder(pinPwmBackLeft, pinDirBackLeft,
-                                 pinBrakeBackLeft))
-               ->setChannel(4)
-               ->setResolutionInBits(8)
-               ->build(),
-           maxW, minPwm, maxPwm, backFactor))
-          ->setup();
+    const BLDCMotorSettings &frontRight, const BLDCMotorSettings &frontLeft,
+    const BLDCMotorSettings &backRight, const BLDCMotorSettings &backLeft) {
+  motorFrontRightController = buildController(frontRight);
+  motorFrontLeftController = buildController(frontLeft);
+  motorBackRightController = buildController(backRight);
+  motorBackLeftController = buildController(backLeft);
 }
 
 void FourWheelBLDCController::stop() {

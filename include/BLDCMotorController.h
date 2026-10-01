@@ -2,6 +2,28 @@
 #include <BLDCMotor.h>
 #include <WToSignedPWMConverter.h>
 
+/** @brief Physical and conversion settings for one BLDC motor controller. */
+struct BLDCMotorSettings {
+  /** @brief GPIO supplying PWM duty to this motor. */
+  int pwmPin;
+  /** @brief GPIO selecting this motor direction. */
+  int directionPin;
+  /** @brief GPIO activating this motor brake. */
+  int brakePin;
+  /** @brief LEDC channel assigned to this motor PWM output. */
+  int pwmChannel;
+  /** @brief Reverses electrical direction to match logical wheel direction. */
+  bool invertDirection;
+  /** @brief Largest permitted logical wheel speed magnitude. */
+  float maxW;
+  /** @brief PWM duty used for the smallest nonzero motor command. */
+  int minPwm;
+  /** @brief PWM duty used for the largest motor command. */
+  int maxPwm;
+  /** @brief Output multiplier applied to this motor. */
+  float factor;
+};
+
 /**
  * @brief High-level controller for a single BLDC Motor.
  *
