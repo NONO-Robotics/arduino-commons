@@ -21,34 +21,19 @@ private:
   BLDCMotorController *motorBackLeftController;
   BLDCMotorController *motorBackRightController;
 
-public:
+ public:
   /**
-   * @brief Construct a new Four Wheel BLDC Controller object.
+   * @brief Constructs the four-wheel actuator from one complete configuration.
    *
-   * @param maxW Maximum angular velocity for the wheels (rad/s).
-   * @param minPwm Minimum PWM signal value.
-   * @param maxPwm Maximum PWM signal value.
-   * @param pinPwmFrontRight PWM pin for Front-Right motor.
-   * @param pinDirFrontRight Direction pin for Front-Right motor.
-   * @param pinBrakeFrontRight Brake pin for Front-Right motor.
-   * @param pinPwmFrontLeft PWM pin for Front-Left motor.
-   * @param pinDirFrontLeft Direction pin for Front-Left motor.
-   * @param pinBrakeFrontLeft Brake pin for Front-Left motor.
-   * @param pinPwmBackRight PWM pin for Back-Right motor.
-   * @param pinDirBackRight Direction pin for Back-Right motor.
-   * @param pinBrakeBackRight Brake pin for Back-Right motor.
-   * @param pinPwmBackLeft PWM pin for Back-Left motor.
-   * @param pinDirBackLeft Direction pin for Back-Left motor.
-   * @param pinBrakeBackLeft Brake pin for Back-Left motor.
+   * @param frontRight Settings for logical front-right motor.
+   * @param frontLeft Settings for logical front-left motor.
+   * @param backRight Settings for logical back-right motor.
+   * @param backLeft Settings for logical back-left motor.
    */
-  FourWheelBLDCController(float maxW, int minPwm, int maxPwm,
-                          int pinPwmFrontRight, int pinDirFrontRight,
-                          int pinBrakeFrontRight, int pinPwmFrontLeft,
-                          int pinDirFrontLeft, int pinBrakeFrontLeft,
-                          int pinPwmBackRight, int pinDirBackRight,
-                          int pinBrakeBackRight, int pinPwmBackLeft,
-                          int pinDirBackLeft, int pinBrakeBackLeft,
-                          float frontFactor = 1.0, float backFactor = 1.0);
+  FourWheelBLDCController(const BLDCMotorSettings &frontRight,
+                          const BLDCMotorSettings &frontLeft,
+                          const BLDCMotorSettings &backRight,
+                          const BLDCMotorSettings &backLeft);
 
   /**
    * @brief Stops all four motors immediately.
