@@ -2,7 +2,7 @@
 #include <Arduino.h>
 
 /**
- * DCMotor class for controlling a DC motor using PWM.
+ * @brief Controls a bidirectional DC motor through two direction pins and PWM.
  *
  * This class provides methods to set up the motor pins and control the
  * motor's speed and direction using PWM signals.
@@ -15,41 +15,30 @@ private:
 
 public:
   /**
-   * Constructor for DCMotor.
-   * @param aPin Pin number for the A channel
-   * @param bPin Pin number for the B channel
-   * @param pwmPin Pin number for the PWM signal
+   * @brief Configures the GPIO pins used by a DC motor driver.
+   * @param aPin GPIO pin for direction channel A.
+   * @param bPin GPIO pin for direction channel B.
+   * @param pwmPin GPIO pin carrying the PWM signal.
    */
   DCMotor(unsigned short int aPin, unsigned short int bPin,
           unsigned short int pwmPin);
 
   /**
-   * Setup the motor pins.
-   * @return Pointer to the DCMotor instance
+   * @brief Configures the motor GPIO pins for output.
+   * @return Pointer to this initialized DCMotor instance.
    */
   DCMotor *setup();
 
   /**
-   * @brief Move motor with specified speed and direction.
-   *
-   * @param speed Speed value -255 to 255 (if signed) or logic handled
-   * internally. Actually checking implementation: usually signed or just 0-255
-   * with separate direction logic? Based on previous args it says "speed: 0 -
-   * 255" and "direction". Let's standardize to signed speed for simplicity if
-   * the API supports it, but here the API signature is `move(short int speed)`.
-   *              Checking the existing comment: "speed: 0 - 255" and
-   * "direction: forward or backward". Wait, the signature is `move(short int
-   * speed)`. I will assume standard signed behavior or positive with implied
-   * direction if just one arg. Let's read implementation logic later if
-   * critical. For now updating to simple Doxygen.
-   *
-   * @param speed Speed value.
-   * @return Pointer to the DCMotor instance
+   * @brief Sets motor direction from the sign and PWM magnitude from the speed.
+   * @param speed Signed PWM command; non-negative values select channel A and
+   * negative values select channel B.
+   * @return Pointer to this DCMotor instance after applying the command.
    */
   DCMotor *move(short int speed);
 
   /**
-   * @brief Stop the motor.
+   * @brief Stops PWM output to the motor.
    */
   void stop();
 };

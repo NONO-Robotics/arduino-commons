@@ -5,7 +5,7 @@
 #include "Logger.h"
 
 /**
- * @brief Helper class to store configuration in LittleFS (JSON format).
+ * @brief Loads, reads, and persists a JSON configuration document in LittleFS.
  */
 class ConfigStorage {
 private:
@@ -14,41 +14,41 @@ private:
 
 public:
   /**
-   * @brief Construct a new Config Storage object.
-   * @param path File path in LittleFS (default "/config.json").
+   * @brief Selects the LittleFS path that stores the JSON configuration.
+   * @param path LittleFS file path; defaults to "/config.json".
    */
   ConfigStorage(String path = "/config.json");
 
   /**
-   * @brief Mount LittleFS and load configuration file.
-   * @return true if successful.
+   * @brief Mounts LittleFS and loads the selected configuration file.
+   * @return True when the filesystem and configuration load successfully.
    */
   bool begin();
 
   /**
-   * @brief Get a configuration value.
-   * @param key JSON key.
-   * @param defaultValue Value to return if key not found.
-   * @return Value as String.
+   * @brief Looks up a string value in the loaded JSON document.
+   * @param key JSON key to read.
+   * @param defaultValue Value returned when the key is absent; defaults to an empty string.
+   * @return Stored string value, or defaultValue when the key is absent.
    */
   String get(String key, String defaultValue = "");
 
   /**
-   * @brief Check if key exists.
-   * @param key JSON key.
-   * @return true if exists.
+   * @brief Tests whether the loaded JSON document contains a key.
+   * @param key JSON key to test.
+   * @return True when key exists in the document; otherwise false.
    */
   bool has(String key);
 
   /**
-   * @brief Set a configuration value.
-   * @param key JSON key.
-   * @param value Value to store.
+   * @brief Stores a string value under a JSON key in memory.
+   * @param key JSON key to create or replace.
+   * @param value String value to store.
    */
   void set(String key, String value);
 
   /**
-   * @brief Persist configuration to file.
+   * @brief Serializes the in-memory configuration to its LittleFS file.
    */
   void save();
 };

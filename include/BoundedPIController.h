@@ -18,11 +18,11 @@ private:
 
 public:
   /**
-   * @brief Constructs a bounded PI controller.
+   * @brief Creates a PI controller with bounded output and accumulated error.
    *
-   * @param proportionalGain Proportional gain.
-   * @param integralGain Integral gain.
-   * @param maxCorrection Maximum absolute output correction.
+   * @param proportionalGain Gain applied to the current signed error.
+   * @param integralGain Gain applied to the accumulated signed error.
+   * @param maxCorrection Maximum absolute returned correction.
    * @param maxIntegral Maximum absolute accumulated error.
    */
   BoundedPIController(float proportionalGain, float integralGain,
@@ -55,7 +55,7 @@ public:
                float minimumCorrection, float maximumCorrection);
 
   /**
-   * @brief Clears accumulated error.
+   * @brief Clears the accumulated error without changing configured limits or gains.
    */
   void reset();
 };

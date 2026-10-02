@@ -38,38 +38,39 @@ private:
 
 public:
   /**
-   * @brief Construct a new BLDCMotor Controller.
+   * @brief Creates a controller that maps angular-speed targets to motor PWM.
    *
-   * @param motor Pointer to the initialized BLDCMotor.
-   * @param maxW Maximum angular velocity (rad/s) expected.
-   * @param minPwm Minimum PWM value to start movement (deadzone compensation).
-   * @param maxPwm Maximum PWM value allowed.
+   * @param motor Pointer to the initialized BLDCMotor to command.
+   * @param maxW Maximum commanded angular velocity in rad/s.
+   * @param minPwm Minimum PWM magnitude that overcomes the motor dead zone.
+   * @param maxPwm Maximum permitted PWM magnitude.
+   * @param factor Scale applied to the angular-speed command; defaults to 1.0.
    */
   BLDCMotorController(BLDCMotor *motor, float maxW, int minPwm, int maxPwm, float factor = 1.0);
 
   /**
-   * @brief Setup the controller.
-   * @return Pointer to this controller instance.
+   * @brief Initializes the controlled motor and its speed-to-PWM converter.
+   * @return Pointer to this initialized controller instance.
    */
   BLDCMotorController *setup();
 
   /**
-   * @brief Set speed in Radians per Second.
-   * @param radsBySeg Angular velocity in rad/s.
+   * @brief Converts an angular-speed target to PWM and commands the motor.
+   * @param radsBySeg Requested signed angular velocity in rad/s.
    * @return Pointer to this controller instance.
    */
   BLDCMotorController *setRadsBySegSpeed(float radsBySeg);
 
   /**
-   * @brief Direct PWM control (mainly for testing).
-   * @param value Signed PWM value.
+   * @brief Sends a signed PWM command directly to the motor.
+   * @param value Signed PWM duty-cycle value.
    * @return Pointer to this controller instance.
    */
   BLDCMotorController *setPwmSpeed(int value);
 
   /**
-   * @brief Stop the motor.
-   * @return Pointer to this controller instance.
+   * @brief Stops the controlled motor.
+   * @return Pointer to this controller after stopping its motor.
    */
   BLDCMotorController *stop();
 };

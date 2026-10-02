@@ -38,6 +38,12 @@ public:
   void update();
 };
 
+/**
+ * @brief Configures and creates a GPSSensor using a HardwareSerial port.
+ *
+ * Required serial pins and update callback are collected before build() creates
+ * the sensor.
+ */
 class GPSSensorBuilder {
 private:
   // Core object, required by the constructor
@@ -59,23 +65,31 @@ public:
   GPSSensorBuilder(HardwareSerial *serial);
 
   /**
-   * @brief REQUIRED: Set the RX and TX pins.
+   * @brief Set serial receive and transmit pins required by the GPS module.
+   * @param rx GPIO number connected to the module's transmit pin.
+   * @param tx GPIO number connected to the module's receive pin.
+   * @return Pointer to this builder for chaining.
    */
   GPSSensorBuilder *setPins(int rx, int tx);
 
   /**
-   * @brief REQUIRED: Register the on-update callback.
+   * @brief Register the callback invoked when parsed GPS data is available.
+   * @param onUpdate Callback receiving the latest GPS data.
+   * @return Pointer to this builder for chaining.
    */
   GPSSensorBuilder *setOnUpdateEvent(OnUpdateGpsSensorEvent onUpdate);
 
   /**
-   * @brief OPTIONAL: Set the baud rate.
+   * @brief Set the serial data rate used to communicate with the GPS module.
+   * @param rate Serial rate in bits per second.
+   * @return Pointer to this builder for chaining.
    */
   GPSSensorBuilder *setBaudRate(int rate);
 
   /**
-   * @brief Build and return the final GPSSensor object.
+   * @brief Create a sensor from the configured serial connection and callback.
    * @throws std::runtime_error or halts if required parameters are not set.
+   * @return Pointer to the newly created GPS sensor.
    */
   GPSSensor *build();
 };

@@ -2,7 +2,7 @@
 #include <Arduino.h>
 
 /**
- * @brief Simple debounced button class.
+ * @brief Reads an active-low GPIO button with a fixed 50 ms debounce interval.
  */
 class Button {
 private:
@@ -13,19 +13,19 @@ private:
 
 public:
   /**
-   * @brief Construct a new Button object.
-   * @param p GPIO pin number.
+   * @brief Configures a button reader for one GPIO pin.
+   * @param p GPIO pin connected to the button.
    */
   Button(uint8_t p);
 
   /**
-   * @brief Initialize button pin (INPUT_PULLUP by default).
+   * @brief Configures the button pin as INPUT_PULLUP.
    */
   void init();
 
   /**
-   * @brief Check if button is pressed (with debouncing).
-   * @return true if pressed.
+   * @brief Reports a debounced button press and updates the saved pin state.
+   * @return True when the active-low button is pressed after debouncing.
    */
   bool pressed();
 };

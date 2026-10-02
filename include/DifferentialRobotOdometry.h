@@ -6,14 +6,16 @@
  * @brief Class for tracking differential robot odometry in terms of wheel
  * angular velocities.
  */
+/**
+ * @brief Stores left and right angular velocities derived from four-wheel state.
+ */
 class DifferentialRobotOdometry {
 private:
   float leftW, rightW;
 
 public:
   /**
-   * @brief Constructor for DifferentialRobotOdometry.
-   * Initializes angular velocities to zero.
+   * @brief Creates an odometry state with both side velocities set to zero.
    */
   DifferentialRobotOdometry() {
     leftW = 0.0;
@@ -33,8 +35,8 @@ public:
   float getRightWInRad() const { return rightW; }
 
   /**
-   * @brief Update from a four-wheel robot state (averaging sides).
-   * @param robotW State of the four-wheel robot.
+   * @brief Averages front and rear wheel speeds into left and right velocities.
+   * @param robotW Four-wheel angular-speed state in rad/s.
    */
   void updateFrom(FourWheelAngularSpeed robotW) {
     leftW = (robotW.getFlWInRad() + robotW.getBlWInRad()) / 2.0f;

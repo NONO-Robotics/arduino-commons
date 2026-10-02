@@ -5,5 +5,10 @@ repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$repo_root"
 
 rm -rf docs
-doxygen Doxyfile
+out="$(doxygen Doxyfile 2>&1)"
+echo "$out"
+if grep -qi warning <<<"$out"; then
+    echo "ERROR: doxygen warnings found" >&2
+    exit 1
+fi
 echo "docs built: $repo_root/docs/html/index.html"
