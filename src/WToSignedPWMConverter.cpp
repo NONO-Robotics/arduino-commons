@@ -1,5 +1,7 @@
 #include "WToSignedPWMConverter.h"
 
+#include <math.h>
+
 int intClamp(int valor, int min, int max) {
   if (valor < min)
     return min;
@@ -24,12 +26,12 @@ WToSignedPWMConverter::WToSignedPWMConverter(
 
 int WToSignedPWMConverter::convert(float w) {
   // Absolute software deadzone (zero noise)
-  if (abs(w) < 0.002)
+  if (fabs(w) < 0.002)
     return 0;
 
   // Mapping calculation with floating point arithmetic for precision
   // PWM = ( |Current Omega| / Max Omega ) * maxPwmLimit_Counts
-  int pwm = (abs(w) / maxW) * (float)maxPwmLimit;
+  int pwm = (fabs(w) / maxW) * (float)maxPwmLimit;
 
   pwm = intClamp(
     pwm, 

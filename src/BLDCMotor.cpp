@@ -34,8 +34,6 @@ BLDCMotor *BLDCMotor::setup() {
   return this;
 }
 
-int getSign(float value) { return (value >= 0) ? 1 : -1; }
-
 // Set Speed and Direction
 BLDCMotor *BLDCMotor::setPwmSpeed(int speed) {
   // Limit the value to the allowed range (e.g., -4095 to 4095)
