@@ -15,5 +15,8 @@ gcovr \
     --object-directory "$repo_root/.pio/build/native" \
     --filter 'src/' \
     --exclude-throw-branches \
+    --fail-under-line 90 \
+    --fail-under-function 90 \
+    --fail-under-branch 90 \
     --print-summary \
     --html-details "$repo_root/coverage/index.html"
