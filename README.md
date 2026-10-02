@@ -3,6 +3,8 @@
 <div align="center">
   <img src="https://img.shields.io/badge/PlatformIO-Compatible-orange" alt="PlatformIO"/>
   <img src="https://img.shields.io/badge/Arduino-Compatible-blue" alt="Arduino"/>
+  <a href="https://nono-robotics.github.io/arduino-commons/"><img src="https://img.shields.io/badge/docs-Doxygen-blue.svg" alt="Docs"/></a>
+  <a href="https://nono-robotics.github.io/arduino-commons/coverage/"><img src="https://img.shields.io/badge/coverage-report-brightgreen.svg" alt="Coverage"/></a>
   <img src="https://img.shields.io/badge/License-MIT-green" alt="License"/>
 </div>
 
