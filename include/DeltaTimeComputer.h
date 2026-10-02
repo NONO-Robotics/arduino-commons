@@ -5,7 +5,7 @@
 typedef void (*OnDeltaTimeReachedEvent)();
 
 /**
- * DeltaTimeComputer class for calculating time intervals.
+ * @brief Tracks elapsed Arduino time between updates and configured intervals.
  *
  * This class provides methods to calculate the time difference between
  * consecutive updates, allowing for precise timing in applications.
@@ -23,61 +23,55 @@ private:
 
 public:
   /**
-   * Constructor for DeltaTimeComputer.
-   *
-   * @param delta The time period to track in milliseconds.
+   * @brief Creates an interval tracker with an optional target period.
+   * @param delta Target period in milliseconds; defaults to zero.
    */
   DeltaTimeComputer(unsigned int delta = 0);
 
   /**
-   * Setup the DeltaTimeComputer.
-   * @return Pointer to the DeltaTimeComputer instance.
+   * @brief Initializes time tracking from the current Arduino clock value.
+   * @return Pointer to this initialized DeltaTimeComputer instance.
    */
   DeltaTimeComputer *setup();
 
   /**
-   * Update the current time and calculate the time difference.
+   * @brief Updates the elapsed time using the current Arduino clock value.
    */
   void update();
 
   /**
-   * Reset the time difference calculation.
+   * @brief Resets elapsed-time tracking to the current Arduino clock value.
    */
   void reset();
 
   /**
-   * Get the time difference in milliseconds.
-   *
-   * @return The time difference in milliseconds.
+   * @brief Returns elapsed time since the preceding update or reset.
+   * @return Elapsed time in milliseconds.
    */
   unsigned int deltaInMillis();
 
   /**
-   * Check if a time period has been reached.
-   *
-   * @return True if the time period has been reached, false otherwise.
+   * @brief Tests whether elapsed time reaches the configured target period.
+   * @return True when elapsed milliseconds are at least the configured period.
    */
   bool hasBeenReached();
 
   /**
-   * Check if a specific time period has been reached.
-   *
-   * @param deltaParam The specific time period to check against in milliseconds.
-   * @return True if the time period has been reached, false otherwise.
+   * @brief Tests whether elapsed time reaches a caller-provided period.
+   * @param deltaParam Period to compare against in milliseconds.
+   * @return True when elapsed milliseconds are at least deltaParam.
    */
   bool hasBeenReached(unsigned int deltaParam);
 
   /**
-   * @brief Update the current time and trigger the event if the configured delta time has been reached.
-   *
-   * @param event The callback function to execute when the delta time is reached.
+   * @brief Updates time and invokes a callback when the configured period is reached.
+   * @param event Callback invoked when elapsed milliseconds reach the configured period.
    */
   void update(OnDeltaTimeReachedEvent event);
 
   /**
-   * Get the configured delta time.
-   *
-   * @return The configured delta time in milliseconds.
+   * @brief Returns the configured target period.
+   * @return Target period in milliseconds.
    */
   unsigned int getDelta();
 };

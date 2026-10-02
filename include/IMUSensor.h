@@ -19,6 +19,12 @@
  */
 using OnUpdateIMUSensorEvent = void (*)(IMUData *);
 
+/**
+ * @brief Configures a BNO08x IMU and publishes its latest motion reports.
+ *
+ * The sensor is read over I2C and invokes the supplied callback after a new
+ * report has been processed.
+ */
 class IMUSensor {
 private:
   Adafruit_BNO08x sensor;
@@ -33,15 +39,15 @@ private:
 
 public:
   /**
-   * @brief Construct a new IMUSensor object.
+   * @brief Create an IMU reader with report intervals and an update callback.
    *
-   * @param onUpdate Callback for new IMU data.
-   * @param wire Pointer to I2C interface.
-   * @param i2c_address I2C address of the sensor.
-   * @param rotationVectorIntervalinUs Interval for rotation vector report.
+   * @param onUpdate Callback invoked after new IMU data is processed.
+   * @param wire I2C interface connected to the sensor.
+   * @param i2c_address Seven-bit I2C address of the sensor.
+   * @param rotationVectorIntervalinUs Rotation-vector report interval in microseconds.
    * @param linearAccelerationIntervalinUs Interval for linear acceleration
    * report.
-   * @param gyroscopeIntervalinUs Interval for gyroscope report.
+   * @param gyroscopeIntervalinUs Gyroscope report interval in microseconds.
    */
   IMUSensor(OnUpdateIMUSensorEvent onUpdate, TwoWire *wire = &Wire,
             uint8_t i2c_address = IMU_SENSOR_I2C_ADDRESS,
@@ -52,26 +58,26 @@ public:
             uint32_t gyroscopeIntervalinUs = IMU_SENSOR_GYROSCOPE_INTERVAL_US);
 
   /**
-   * @brief Setup and start the sensor.
-   * @return Pointer to this IMUSensor instance.
+   * @brief Initialize the sensor and enable configured reports.
+   * @return Pointer to this IMUSensor instance after setup.
    */
   IMUSensor *begin();
 
   /**
-   * @brief Initialize communications and checks sensor ID.
-   * @return true if successful.
+   * @brief Start I2C communication and verify that the sensor responds.
+   * @return true when sensor initialization succeeds.
    */
   bool init();
 
   /**
-   * @brief Update sensor readings.
-   * @return true if new data was processed.
+   * @brief Process one available sensor report and update cached IMU data.
+   * @return true when a new report was processed.
    */
   bool update();
 
   /**
-   * @brief Get the latest IMU data.
-   * @return Pointer to IMUData.
+   * @brief Return the most recently processed IMU sample.
+   * @return Pointer to the internally stored IMU data.
    */
   IMUData *getValue();
 };

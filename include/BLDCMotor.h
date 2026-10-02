@@ -11,14 +11,14 @@ const int DEFAULT_RESOLUTION_IN_BITS = 11;
 class BLDCMotor {
 public:
   /**
-   * @brief Constructor for BLDCMotor.
-   * @param pwmPin Pin for PWM speed control.
-   * @param dirPin Pin for direction control.
-   * @param brakePin Pin for brake control.
-   * @param resolutionInBits PWM resolution in bits (default 11).
-   * @param channel LEDC channel for PWM generation (default 0).
-   * @param frequency PWM frequency in Hz (default 20000).
-   * @param invertDirection If true, inverts the motor direction logic.
+ * @brief Configures a BLDC motor driver without initializing its hardware.
+ * @param pwmPin GPIO pin carrying the PWM speed signal.
+ * @param dirPin GPIO pin selecting motor direction.
+ * @param brakePin GPIO pin controlling the motor brake.
+ * @param resolutionInBits PWM resolution in bits; defaults to DEFAULT_RESOLUTION_IN_BITS.
+ * @param channel LEDC channel used to generate PWM; defaults to DEFAULT_CHANNEL.
+ * @param frequency PWM carrier frequency in Hz; defaults to DEFAULT_FREQUENCY.
+ * @param invertDirection True to reverse the configured direction logic.
    */
   BLDCMotor(int pwmPin, int dirPin, int brakePin,
             int resolutionInBits = DEFAULT_RESOLUTION_IN_BITS,
@@ -26,8 +26,8 @@ public:
             bool invertDirection = false);
 
   /**
-   * @brief Initialize the motor pins and PWM channel.
-   * @return Pointer to this BLDCMotor instance.
+ * @brief Initializes GPIO pins and configures the selected LEDC PWM channel.
+ * @return Pointer to this initialized BLDCMotor instance.
    */
   BLDCMotor *setup();
 
@@ -40,26 +40,26 @@ public:
   BLDCMotor *setPwmSpeed(int pwm);
 
   /**
-   * @brief Get the configured PWM resolution.
-   * @return Resolution in bits.
+ * @brief Returns the configured PWM resolution.
+ * @return PWM resolution in bits.
    */
   int getResolutionInBits();
 
   /**
-   * @brief Activate the physical brake.
-   * @return Pointer to this BLDCMotor instance.
+ * @brief Activates the motor driver's physical brake output.
+ * @return Pointer to this BLDCMotor instance with braking enabled.
    */
   BLDCMotor *brake();
 
   /**
-   * @brief Release the physical brake.
-   * @return Pointer to this BLDCMotor instance.
+ * @brief Releases the motor driver's physical brake output.
+ * @return Pointer to this BLDCMotor instance with braking disabled.
    */
   BLDCMotor *releaseBrake();
 
   /**
-   * @brief Stop the motor immediately (activates brake).
-   * @return Pointer to this BLDCMotor instance.
+ * @brief Commands zero speed and activates the physical brake.
+ * @return Pointer to this stopped BLDCMotor instance.
    */
   BLDCMotor *stop(); // Removed float pauseInMs
 

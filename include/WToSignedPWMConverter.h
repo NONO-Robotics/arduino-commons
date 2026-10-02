@@ -17,17 +17,19 @@ private:
 
 public:
   /**
-   * @brief Constructor.
-   * @param pwmResolutionInBits PWM resolution (Recommended: 12 bits)
-   * @param minPwm Minimum deadzone for motor to start turning
+   * @brief Creates a converter from signed angular velocity to signed PWM.
+   * @param maxW Maximum angular-velocity magnitude in rad/s.
+   * @param pwmResolutionInBits PWM resolution in bits.
+   * @param minPwm Minimum PWM magnitude that overcomes the motor dead zone.
+   * @param maxPwm Maximum PWM magnitude; zero uses the PWM-resolution limit.
    */
   WToSignedPWMConverter(float maxW, int pwmResolutionInBits, int minPwm,
                         int maxPwm = 0);
 
   /**
-   * @brief Convert angular velocity to signed PWM.
-   * @param w Angular velocity.
-   * @return Signed PWM value.
+   * @brief Map an angular-velocity request to a bounded signed PWM duty cycle.
+   * @param w Requested angular velocity in rad/s.
+   * @return Signed PWM duty-cycle value; sign indicates requested direction.
    */
   int convert(float w);
 };

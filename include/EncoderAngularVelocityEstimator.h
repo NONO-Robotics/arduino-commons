@@ -15,6 +15,11 @@ const float DEFAULT_DEAD_ZONE = 0.55;
  * to smooth out spikes and provide stable velocity estimates (rad/s)
  * for reliable odometry calculation.
  */
+/**
+ * @brief Converts AS5600 encoder count changes into filtered angular velocity.
+ *
+ * The estimator applies an EWMA filter and suppresses values within its configured dead zone.
+ */
 class EncoderAngularVelocityEstimator {
 
 private:
@@ -27,23 +32,26 @@ private:
 
 public:
   /**
-   * @brief Constructor.
-   * @param alpha Filter smoothing factor.
-   * @param deadZone Deadzone for velocity.
+   * @brief Creates an angular-velocity estimator with filtering and a dead zone.
+   * @param alpha EWMA smoothing factor; defaults to DEFAULT_ALPHA.
+   * @param deadZone Angular-velocity magnitude in rad/s treated as zero; defaults to DEFAULT_DEAD_ZONE.
    */
   EncoderAngularVelocityEstimator(double alpha = DEFAULT_ALPHA,
                                   float deadZone = DEFAULT_DEAD_ZONE)
       : filter(new Ewma(alpha)), deadZone(deadZone) {}
 
+  /**
+   * @brief Releases the estimator's EWMA filter.
+   */
   ~EncoderAngularVelocityEstimator() { delete filter; }
 
   /**
-   * @brief Calculate angular velocity (W) in rad/s.
+   * @brief Converts an encoder count delta into signed angular velocity.
    *
-   * @param valueDiff Difference in encoder steps.
-   * @param deltaTimeMs Time difference in milliseconds.
-   * @param applyFilter Whether to apply EWMA filter.
-   * @return Angular velocity in rad/s.
+   * @param valueDiff Signed change in 12-bit encoder counts.
+   * @param deltaTimeMs Elapsed sampling time in milliseconds.
+   * @param applyFilter True to apply the EWMA filter; defaults to true.
+   * @return Signed angular velocity in rad/s, or zero for a non-positive interval or dead-zone value.
    */
   float getWInRadBySec(float valueDiff, float deltaTimeMs,
                        bool applyFilter = true) {

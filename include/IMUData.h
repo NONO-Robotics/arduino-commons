@@ -2,7 +2,7 @@
 #pragma once
 
 /**
- * @brief Structure/Class holding IMU sensor data.
+ * @brief Stores orientation, angular velocity, and linear acceleration samples.
  *
  * This class stores the orientation quaternion, angular velocity, and linear
  * acceleration data from an IMU sensor (e.g., BNO08x).
@@ -25,96 +25,95 @@ private:
 
 public:
   /**
-   * @brief Construct a new IMUData object.
-   * Initializes all data fields to 0.0.
+   * @brief Create an IMU sample with every field initialized to zero.
    */
   IMUData();
 
   /**
-   * @brief Set the orientation quaternion.
+   * @brief Store an orientation quaternion from the latest sensor sample.
    *
-   * @param w W component.
-   * @param x X component.
-   * @param y Y component.
-   * @param z Z component.
+   * @param w Scalar quaternion component (unitless).
+   * @param x X quaternion component (unitless).
+   * @param y Y quaternion component (unitless).
+   * @param z Z quaternion component (unitless).
    */
   void setOrientation(double w, double x, double y, double z);
 
   /**
-   * @brief Set the angular velocity.
+   * @brief Store angular velocity around each sensor axis.
    *
-   * @param x Velocity around X-axis.
-   * @param y Velocity around Y-axis.
-   * @param z Velocity around Z-axis.
+   * @param x Angular velocity around X-axis in rad/s.
+   * @param y Angular velocity around Y-axis in rad/s.
+   * @param z Angular velocity around Z-axis in rad/s.
    */
   void setAngularVelocity(double x, double y, double z);
 
   /**
-   * @brief Set the linear acceleration.
+   * @brief Store linear acceleration along each sensor axis.
    *
-   * @param x Acceleration along X-axis.
-   * @param y Acceleration along Y-axis.
-   * @param z Acceleration along Z-axis.
+   * @param x Linear acceleration along X-axis in m/s^2.
+   * @param y Linear acceleration along Y-axis in m/s^2.
+   * @param z Linear acceleration along Z-axis in m/s^2.
    */
   void setLinearAcceleration(double x, double y, double z);
 
   /**
-   * @brief Get the X component of the orientation quaternion.
-   * @return double Orientation X.
+   * @brief Return the X component of the stored orientation quaternion.
+   * @return Unitless X quaternion component.
    */
   double getOrientationX();
 
   /**
-   * @brief Get the Y component of the orientation quaternion.
-   * @return double Orientation Y.
+   * @brief Return the Y component of the stored orientation quaternion.
+   * @return Unitless Y quaternion component.
    */
   double getOrientationY();
 
   /**
-   * @brief Get the Z component of the orientation quaternion.
-   * @return double Orientation Z.
+   * @brief Return the Z component of the stored orientation quaternion.
+   * @return Unitless Z quaternion component.
    */
   double getOrientationZ();
 
   /**
-   * @brief Get the W component of the orientation quaternion.
-   * @return double Orientation W.
+   * @brief Return the scalar component of the stored orientation quaternion.
+   * @return Unitless W quaternion component.
    */
   double getOrientationW();
 
   /**
-   * @brief Get the angular velocity around the X-axis.
-   * @return double Angular velocity X (rad/s).
+   * @brief Return angular velocity around the X-axis.
+   * @return Angular velocity in rad/s.
    */
   double getAngularVelocityX();
 
   /**
-   * @brief Get the angular velocity around the Y-axis.
-   * @return double Angular velocity Y (rad/s).
+   * @brief Return angular velocity around the Y-axis.
+   * @return Angular velocity in rad/s.
    */
   double getAngularVelocityY();
 
   /**
-   * @brief Get the angular velocity around the Z-axis.
-   * @return double Angular velocity Z (rad/s).
+   * @brief Return angular velocity around the Z-axis.
+   * @return Angular velocity in rad/s.
    */
   double getAngularVelocityZ();
 
   /**
-   * @brief Get the linear acceleration along the X-axis.
-   * @return double Linear acceleration X (m/s^2).
+   * @brief Return linear acceleration along the X-axis.
+   * @return Linear acceleration in m/s^2.
    */
   double getLinearAccelerationX();
 
   /**
-   * @brief Get the linear acceleration along the Y-axis.
-   * @return double Linear acceleration Y (m/s^2).
+   * @brief Return linear acceleration along the Y-axis.
+   * @return Linear acceleration in m/s^2.
    */
   double getLinearAccelerationY();
 
   /**
-   * @brief Get the linear acceleration along the Z-axis.
-   * @return double Linear acceleration Z (m/s^2).
+   * @brief Return linear acceleration along the Z-axis.
+   * @return Linear acceleration in m/s^2.
    */
   double getLinearAccelerationZ();
 };

@@ -3,16 +3,15 @@
 #include "BLDCMotor.h"
 
 /**
- * @brief Builder class for constructing BLDCMotor objects with fluent
- * interface.
+ * @brief Builds configured BLDCMotor instances through a fluent interface.
  */
 class BLDCMotorBuilder {
 public:
   /**
-   * @brief Constructor for BLDCMotorBuilder.
-   * @param pwmPin Pin for PWM.
-   * @param dirPin Pin for direction.
-   * @param brakePin Pin for brake.
+   * @brief Starts a motor configuration with its required GPIO pins.
+   * @param pwmPin GPIO pin carrying the PWM speed signal.
+   * @param dirPin GPIO pin selecting motor direction.
+   * @param brakePin GPIO pin controlling the motor brake.
    */
   BLDCMotorBuilder(int pwmPin, int dirPin, int brakePin)
       : pwmPin(pwmPin), dirPin(dirPin), brakePin(brakePin),
@@ -33,8 +32,8 @@ public:
   }
 
   /**
-   * @brief Set the PWM channel.
-   * @param ch Channel number.
+   * @brief Selects the LEDC channel used by the built motor.
+   * @param ch LEDC channel number.
    * @return Pointer to this builder.
    */
   BLDCMotorBuilder *setChannel(int ch) {
@@ -53,8 +52,8 @@ public:
   }
 
   /**
-   * @brief Invert the motor direction.
-   * @return Pointer to this builder.
+   * @brief Reverses the direction logic of the built motor.
+   * @return Pointer to this builder with direction inversion enabled.
    */
   BLDCMotorBuilder *invertDirection() {
     this->_invertDirection = true;
@@ -62,8 +61,8 @@ public:
   }
 
   /**
-   * @brief Build the BLDCMotor object.
-   * @return Pointer to the new BLDCMotor instance.
+   * @brief Allocates a BLDCMotor using the accumulated configuration.
+   * @return Pointer to the newly allocated BLDCMotor instance.
    * @throws std::runtime_error if pin configuration is invalid.
    */
   BLDCMotor *build() {
