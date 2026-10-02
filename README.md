@@ -438,3 +438,15 @@ void setup() {
 ## ⚖️ License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 📊 Test Coverage
+
+The latest native regression coverage report is published with the documentation site:
+[nono-robotics.github.io/arduino-commons/coverage](https://nono-robotics.github.io/arduino-commons/coverage/) (regenerated on every push to `main`).
+
+Generate it locally with:
+
+```bash
+commands/regression-test
+# open coverage/index.html
+```
