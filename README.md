@@ -1,454 +1,275 @@
 # Arduino Commons
 
-<div align="center">
-  <img src="https://img.shields.io/badge/PlatformIO-Compatible-orange" alt="PlatformIO"/>
-  <img src="https://img.shields.io/badge/Arduino-Compatible-blue" alt="Arduino"/>
-  <a href="https://nono-robotics.github.io/arduino-commons/"><img src="https://img.shields.io/badge/docs-Doxygen-blue.svg" alt="Docs"/></a>
-  <a href="https://nono-robotics.github.io/arduino-commons/coverage/"><img src="https://img.shields.io/badge/coverage-report-brightgreen.svg" alt="Coverage"/></a>
-  <img src="https://img.shields.io/badge/License-MIT-green" alt="License"/>
-</div>
+Shared Arduino/ESP32 drivers, data types, and nonblocking utilities used by Indoor and Outdoor robot firmware. The library provides reusable building blocks; board pins, calibration, safety limits, and hardware validation belong to the consuming firmware.
 
-<div align="center">
-  <p><strong>A robust collection of common utilities, drivers, and algorithms for robotics development on Arduino and ESP32.</strong></p>
-</div>
+[Doxygen API reference](https://nono-robotics.github.io/arduino-commons/) · [Coverage report](https://nono-robotics.github.io/arduino-commons/coverage/) · [License](LICENSE)
 
----
+## Contents
 
+- [Installation and dependencies](#installation-and-dependencies)
+- [Library map](#library-map)
+- [Usage patterns](#usage-patterns)
+- [Examples](#examples)
+- [Units and hardware limits](#units-and-hardware-limits)
+- [Native tests and hardware validation](#native-tests-and-hardware-validation)
 
-## 🌐 Ecosystem
+## Installation and dependencies
 
-This project is part of the **4w-ros-robot** family:
+### PlatformIO
 
-> 💡 **Naming Convention Tip:**
-> * All subrepositories that **do not** have the prefix `outdoor` are used for the **Indoor Robot** version (except for shared utility libraries like `arduino-commons` and `arduino-ros`).
-> * Subrepositories specifically belonging to the **Outdoor Robot** are prefixed with `outdoor` (with the exception of `4w-robot-cutting-control` which is specific to the grass-cutting system).
-
-* [4w-ros-robot](https://github.com/adrianmarino/4w-ros-robot)
-  * **Sensor data publisher firmware**
-      * [4w-robot-ros-lidar](https://github.com/adrianmarino/4w-robot-ros-lidar): LIDAR sensor publisher firmware.
-  * **Libraries**
-    * [arduino-ros](https://github.com/adrianmarino/arduino-ros): ROS common library.
-    * [arduino-commons](https://github.com/adrianmarino/arduino-commons): Arduino common library.
-  * **Design**
-    * [4w-robot-ros-kicad](https://github.com/adrianmarino/4w-robot-ros-kicad) PCB's Design.
-    * [Solidworks Model](https://drive.google.com/drive/folders/1mQg-BSRZyyYhnBoig6Qm0Zf43U8bTAA7?usp=sharing): 3D model design.
-  * **Indoor**
-    * **Navigation**
-      * [4w-robot-ros-ws](https://github.com/adrianmarino/4w-robot-ros-ws): Autonomous/manual navigation control project.
-      * [4w-robot-ros-movement](https://github.com/adrianmarino/4w-robot-ros-movement.git): Movement controller firmware.
-    * **Sensor data publisher firmware**
-      * [4w-robot-ros-w-publisher](https://github.com/adrianmarino/4w-robot-ros-w-publisher): Wheels angular velocity sensors publisher firmware.
-      * [4w-robot-ros-imu-gps](https://github.com/adrianmarino/4w-ros-robot-imu-gps): IMU, GPS sensors publisher firmware.
-  * **Outdoor**
-    * [mowbot-connect](https://github.com/adrianmarino/mowbot-connect): Real-time Web Control HUD and management application.
-    * [4w-robot-cutting-control](https://github.com/adrianmarino/4w-robot-cutting-control): Automatic cutting motor controller.
-    * **Navigation**
-      * [4w-outdoor-robot-ros-ws](https://github.com/adrianmarino/4w-outdoor-robot-ros-ws): Autonomous/manual navigation control project.
-      * [4w-outdoor-robot-ros-movement](https://github.com/adrianmarino/4w-outdoor-robot-ros-movement.git): Outdoor Movement controller firmware.
-    * **Sensor data publisher firmware**
-      * [4w-outdoor-robot-ros-w-publisher](https://github.com/adrianmarino/4w-outdoor-robot-ros-w-publisher): Outdoor wheels angular velocity sensors publisher firmware.
-      * [4w-outdoor-robot-ros-imu-gps](https://github.com/adrianmarino/4w-outdoor-ros-robot-imu-gps): IMU, GPS sensors publisher firmware.
-
-
-## 🚀 Installation
-
-### PlatformIO (Recommended)
-Add the following to your `platformio.ini`:
+Add the library to an ESP32 Arduino environment:
 
 ```ini
-[env:my_env]
+[env:robot]
+platform = espressif32
+board = esp32dev
+framework = arduino
 lib_deps =
-    adrianmarino/arduino-commons
-    # Add other dependencies like Adafruit BNO08x, U8g2 if using specific modules
+  adrianmarino/arduino-commons
 ```
 
+PlatformIO installs declared package dependencies. Current optional-module dependencies include EWMA (encoder filtering), Adafruit BNO08x (IMU), TinyGPSPlus (GPS), U8g2 (display), and ArduinoJson (configuration storage). Use only the sensor/display modules needed by your firmware and confirm package versions in [`library.json`](library.json).
+
+**Current integration caveat:** `ConfigStorage.h` includes `Logger.h`, but `Logger.h` is not present in this repository or declared in `library.json`. The included `ArduinoCommons.h` also includes `ConfigStorage.h`, so a standalone ESP32 build currently fails unless the consuming project supplies that header. `Logger` currently lives in `arduino-ros`; avoid depending on it from a standalone Commons sketch until this dependency boundary is resolved.
+
 ### Arduino IDE
-1. Clone this repository into your `Arduino/libraries` folder.
-2. Restart the IDE.
 
----
+Clone this repository into `Arduino/libraries/arduino-commons`, then restart the IDE. Install the library dependencies required by any module included by your sketch.
 
-## 📖 Documentation
+Include individual headers to keep dependencies and compile times smaller. `ArduinoCommons.h` is the umbrella include for common motor, sensor, timer, and utility types; newer specialized feedback and wheel snapshot types may require their own headers.
 
-See [Documentation Site](https://nono-robotics.github.io/arduino-commons/)
+## Library map
 
----
+| Area | Main headers/classes | Use |
+|---|---|---|
+| Actuation | `BLDCMotor`, `BLDCMotorBuilder`, `DCMotor` | Low-level PWM/direction/brake output |
+| Speed control | `BLDCMotorController`, `FourWheelBLDCController`, `WToSignedPWMConverter` | Convert signed angular-speed targets to bounded PWM |
+| Feedback control | `WheelSpeedFeedbackController`, `FourWheelBLDCFeedbackController`, `OutdoorFourWheelFeedbackController` | Apply wheel-speed feedback and fault handling |
+| Wheel data | `FourWheelAngularSpeed`, `WheelSpeeds`, `WheelPosition` | Four-wheel commands and measured speed snapshots |
+| Encoders | `AS5600Sensor`, `MagneticEncoder`, `MagneticEncoderUpdateService`, `EncoderAngularVelocityEstimator`, `I2CMultiplexor` | Read AS5600 position and estimate angular speed; optional TCA9548A multiplexing |
+| IMU/GPS | `IMUSensor`, `IMUData`, `GPSSensor`, `GPSData` | BNO08x I2C IMU and serial GPS parsing |
+| Odometry | `DifferentialRobotOdometry` | Average front/rear wheel speeds into left/right rad/s state |
+| Timing | `SimpleTimer`, `DeltaTimeComputer` | Periodic nonblocking callbacks and elapsed-time measurement |
+| Storage/config | `PersistentCounter`, `ConfigStorage`, `MultiResetDetector` | LittleFS-backed values/configuration and reset detection |
+| UI/helpers | `Button`, `SimpleDisplay`, `StringUtils`, `timestamp` | Debounced input, OLED output, string/time helpers |
 
-## 📖 API & Usage Examples
+`DifferentialRobotOdometry` is a small shared data/aggregation type. It does not integrate pose `(x, y, theta)` and does not replace a ROS odometry estimator. Sensor-facing classes require real hardware and bus setup as described in their headers and API docs.
 
-### 🚗 Motors
+## Usage patterns
 
-#### `FourWheelBLDCController` & `BLDCMotorController`
-High-level controllers for 4-wheel bases and single BLDC motors, handling angular velocities and PWM translation.
-* **Usage Context**: `FourWheelBLDCController` acts as the central controller in outdoor/4x4 independent drive robots (e.g. `4w-outdoor-robot-ros-movement`). It receives target wheel speeds (calculated from ROS Twist messages via kinematic equations) and applies them simultaneously to all four wheels.
+1. Declare objects with stable lifetime (global/static or owning application object).
+2. Initialize hardware once in `setup()`.
+3. Poll/update sensors and timers regularly from `loop()` or an application task.
+4. Keep callbacks short and avoid blocking waits or `delay()` in runtime loops.
+5. Calibrate electrical direction, motor dead zone, encoder scale, and limits on the actual assembled robot.
+
+```mermaid
+flowchart LR
+  Enc[Encoder / sensor] --> Poll[Nonblocking update]
+  Poll --> Data[Measured data in rad/s or sensor units]
+  Data --> Ctrl[Controller / estimator]
+  Cmd[Target speed in rad/s] --> Ctrl
+  Ctrl --> Map[Bounded speed-to-PWM conversion]
+  Map --> Motor[Motor driver]
+```
+
+`BLDCMotorBuilder::build()` and several sensor builders return dynamically allocated pointers. If using these builders, call them only during initialization and retain the returned pointer for the object's full lifetime; do not construct them per loop iteration. APIs that accept references/stack objects can be used without heap allocation.
+
+## Examples
+
+### Signed four-wheel angular speed
+
+`FourWheelAngularSpeed` stores front-left, front-right, back-left, and back-right values, all in rad/s. It does not apply motor calibration or PWM conversion.
 
 ```cpp
-#include <FourWheelBLDCController.h>
+#include <FourWheelAngularSpeed.h>
 
-FourWheelBLDCController* baseController;
+FourWheelAngularSpeed target;
 
 void setup() {
-    baseController = new FourWheelBLDCController(
-        10.0, 50, 255,   // maxW, minPwm, maxPwm
-        1, 2, 3,         // FR pins
-        4, 5, 6,         // FL pins
-        7, 8, 9,         // BR pins
-        10, 11, 12       // BL pins
-    );
-    // Control base with rad/s
-    FourWheelAngularSpeed speeds;
-    speeds.updateFrom(2.5, 2.5, 2.5, 2.5);
-    baseController->applySpeed(speeds);
+  target.updateFrom(2.0F, 2.0F, 2.0F, 2.0F);
+}
+
+void loop() {
+  const float leftRadPerSec = target.getAverageLeftWInRad();
+  const float rightRadPerSec = target.getAverageRightWInRad();
+  (void)leftRadPerSec;
+  (void)rightRadPerSec;
 }
 ```
 
-#### `BLDCMotor` & `BLDCMotorBuilder`
-Control Brushless DC motors with PWM, direction, and brake support.
+### BLDC driver setup and direct PWM
+
+Use `BLDCMotor` for low-level signed duty-cycle commands. For angular-speed targets, prefer a controller/converter with calibrated `maxW`, minimum PWM, and maximum PWM. Pin/channel values below are examples only.
 
 ```cpp
 #include <BLDCMotorBuilder.h>
 
-BLDCMotor* motor;
+BLDCMotor *motor;
 
 void setup() {
-    // Fluent builder pattern for easy configuration
-    motor = (new BLDCMotorBuilder(5, 18, 19)) // PWM, DIR, BRAKE pins
-                ->setChannel(0)
-                ->setFrequency(20000)
-                ->setResolutionInBits(11)
-                ->build();
-
-    motor->setup();
-    motor->setPwmSpeed(500); // Set speed
+  motor = BLDCMotorBuilder(5, 18, 19) // PWM, direction, brake GPIOs
+              .setChannel(0)
+              .setFrequency(20000)
+              .setResolutionInBits(11)
+              .build();
+  motor->setup();
+  motor->setPwmSpeed(0); // Signed duty, bounded by configured resolution.
 }
 
 void loop() {
-    // Motor logic
+  // Set calibrated signed duty only when a fresh command is available.
 }
 ```
 
-#### `DCMotor`
-Simple driver for DC Generic motors using H-Bridge drivers.
+### Convert rad/s to signed PWM
+
+`WToSignedPWMConverter` constructor takes maximum absolute angular speed, PWM resolution in bits, minimum nonzero PWM magnitude, and optional maximum PWM magnitude. `convert()` is the API (not `wToSignedPWM()`). The conversion has a minimum-PWM region; do not assume PWM is proportional to speed near zero.
 
 ```cpp
-#include <DCMotor.h>
+#include <WToSignedPWMConverter.h>
 
-// A-Pin, B-Pin, PWM-Pin
-DCMotor motor(12, 13, 14);
-
-void setup() {
-    motor.setup();
-    motor.move(200); // Forward speed 0-255
-}
-```
-
----
-
-### 📡 Sensors
-
-#### `AS5600Sensor`, `MagneticEncoderUpdateService` & `EncoderAngularVelocityEstimator`
-Direct I2C interface for AS5600, service builder for multiplexed encoders, and angular velocity estimation.
-* **Usage Context**: 
-  * `MagneticEncoderUpdateService`: Since AS5600 sensors have a fixed physical I2C address, it's impossible to connect four of them directly to the same bus. This service works with an I2C Multiplexor (e.g., TCA9548A) to rapidly poll all 4 wheels in the wheel-publisher nodes.
-  * `EncoderAngularVelocityEstimator`: Essential for processing noisy raw data from magnetic encoders. It implements an Exponentially Weighted Moving Average (EWMA) filter to smooth out spikes and provide stable velocity estimates (rad/s) for reliable odometry calculation.
-
-```cpp
-#include <MagneticEncoderUpdateServiceBuilder.h>
-#include <EncoderAngularVelocityEstimator.h>
-
-MagneticEncoderUpdateService* encoderService;
-
-void onEncoderUpdate(short int channel, int step, float w) {
-    Serial.printf("Ch %d speed: %f\n", channel, w);
-}
-
-void setup() {
-    Wire.begin();
-    encoderService = MagneticEncoderUpdateServiceBuilder(4, 0x70)
-                        .addEncoder(onEncoderUpdate, 0)
-                        .addEncoder(onEncoderUpdate, 1)
-                        .build();
-    encoderService->begin();
-}
+WToSignedPWMConverter converter(10.0F, 11, 50, 1800);
 
 void loop() {
-    encoderService->update();
+  const int pwm = converter.convert(5.0F); // +5 rad/s -> bounded positive duty
+  (void)pwm;
 }
 ```
 
-#### `GPSSensor`
-Wrapper for serial GPS modules, utilizing callbacks for non-blocking updates.
+### Read an IMU without blocking
+
+`IMUSensor` reads BNO08x over I2C. Initialize the bus and sensor once, then poll `update()` regularly. The callback receives the sensor's updated `IMUData`.
 
 ```cpp
-#include <GPSSensor.h>
-
-void onGpsUpdate(GPSData* data) {
-    // Process new GPS data
-    Serial.print("Lat: "); Serial.println(data->lat);
-}
-
-GPSSensor* gps;
-
-void setup() {
-    Serial2.begin(9600);
-    
-    gps = GPSSensor::GPSSensorBuilder(&Serial2)
-            .setPins(16, 17) // RX, TX
-            .setOnUpdateEvent(onGpsUpdate)
-            .build();
-}
-
-void loop() {
-    // Internal loop handling is done typically inside standard loop or RTOS task
-}
-```
-
-#### `IMUSensor`
-Driver for BNO08x IMU over I2C, providing orientation and acceleration data.
-
-```cpp
+#include <Wire.h>
 #include <IMUSensor.h>
 
-void onImuUpdate(IMUData* data) {
-    Serial.print("Yaw: "); Serial.println(data->yaw);
+void onImuUpdate(IMUData *data) {
+  // Consume a fresh sample; keep callback short.
+  (void)data;
 }
 
 IMUSensor imu(onImuUpdate);
 
 void setup() {
-    imu.init();
-    imu.begin(); // Setup default intervals
+  Wire.begin();
+  if (imu.init()) imu.begin();
 }
 
 void loop() {
-    imu.update(); // Poll sensor
+  imu.update();
 }
 ```
 
-#### `MagneticEncoder` (AS5600)
-Reads angular position and estimates angular velocity ($w$) from AS5600 magnetic sensors.
+### Poll GPS serial input
+
+`GPSSensor` parses incoming serial bytes during `update()` and invokes its callback when its update condition is met. Pass hardware serial, RX/TX pins, callback, and baud rate to the constructor. The serial port/pins must match the board wiring.
 
 ```cpp
-#include <MagneticEncoderBuilder.h>
+#include <GPSSensor.h>
 
-void onVelocityUpdate(short int channel, int step, float w) {
-    Serial.printf("Ch: %d, Speed: %.2f rad/s\n", channel, w);
+void onGpsUpdate(GPSData *data) {
+  (void)data;
 }
 
-MagneticEncoder* encoder;
+GPSSensor *gps;
 
 void setup() {
-    Wire.begin();
-    
-    encoder = MagneticEncoderBuilder()
-                .setChannel(0)
-                .setI2CPort(&Wire)
-                .setCallback(onVelocityUpdate)
-                .build();
-                
-    encoder->begin();
+  // Constructor configures Serial2 at 9600 baud with the selected pins.
+  gps = new GPSSensor(&Serial2, 16, 17, onGpsUpdate, 9600);
 }
 
 void loop() {
-    encoder->update(); // Calculate velocity and trigger callback if needed
+  gps->update();
 }
 ```
 
-#### `DifferentialRobotOdometry`
-Calculates odometry for differential drive robots based on wheel velocities.
+### Periodic work with `SimpleTimer`
 
-```cpp
-#include <DifferentialRobotOdometry.h>
-
-DifferentialRobotOdometry odometry(0.1, 0.5); // radius, separation
-
-void loop() {
-    // Update with current wheel speeds
-    FourWheelAngularSpeed speeds = {5.0, 5.0, 5.0, 5.0};
-    odometry.calculate(speeds);
-    
-    float v_linear = odometry.getLinearSpeed();
-    float v_angular = odometry.getAngularSpeed();
-}
-```
-
----
-
-### 🛠 Utilities
-
-#### `WToSignedPWMConverter`
-Converts physical angular limits into PWM duty cycle ranges.
-* **Usage Context**: Bridges the gap between kinematic mathematics (rad/s) and the physical motors' PWM. Handles constraints such as motor deadzones (the minimum PWM required to break static friction) and maximum PWM limits to protect hardware.
-
-```cpp
-#include <WToSignedPWMConverter.h>
-
-WToSignedPWMConverter converter(10.0, 11, 50); // maxW=10, 11-bit res, minPwm=50
-
-void setup() {
-    int pwm = converter.convert(5.0); // Converts 5.0 rad/s to PWM
-}
-```
-
-#### `PersistentCounter`
-Stores a simple counter value in LittleFS.
-
-```cpp
-#include <PersistentCounter.h>
-
-PersistentCounter counter("/reboots.txt");
-
-void setup() {
-    int count = counter.read();
-    counter.save(count + 1);
-}
-```
-
-#### `Logger`
-Simple logging utility with multiple log levels (TRACE, DEBUG, INFO, WARN, ERROR, FATAL).
-
-```cpp
-#include <Logger.h>
-
-void setup() {
-    logger.setLevel(DEBUG);
-    logger.info("System initializing...");
-}
-```
-
-#### `ConfigStorage`
-Save and load configuration (JSON) using LittleFS.
-
-```cpp
-#include <ConfigStorage.h>
-
-ConfigStorage config("/settings.json");
-
-void setup() {
-    config.begin();
-    String ssid = config.get("wifi_ssid", "default");
-    config.set("wifi_ssid", "NewSSID");
-    config.save();
-}
-```
-
-#### `MultiResetDetector`
-Detects multiple consecutive resets to trigger special modes (e.g., WiFi config portal).
-
-```cpp
-#include <MultiResetDetector.h>
-
-MultiResetDetector mrd(2000, 3); // 2s window, 3 resets
-
-void setup() {
-    if (mrd.detect()) {
-        logger.info("Entering Config Mode...");
-        // Enter config mode
-    }
-}
-
-void loop() {
-    mrd.process();
-}
-```
-
-#### `Button`
-Simple debounced button class.
-
-```cpp
-#include <Button.h>
-
-Button btn(0); // GPIO 0 (Boot button)
-
-void loop() {
-    if (btn.pressed()) {
-        // Handle press
-    }
-}
-```
-
-#### `SimpleTimer`
-Execute tasks periodically without blocking `loop()`.
-* **Usage Context**: Used across sensor nodes (e.g., IMU/GPS) to poll sensors at specific, decoupled intervals asynchronously. This avoids using `delay()` and keeps the main Arduino `loop()` running at high frequency to quickly process incoming ROS messages.
+Timers use elapsed `millis()` time and do not block. Call `update()` frequently; callback work itself should also be bounded and nonblocking.
 
 ```cpp
 #include <SimpleTimer.h>
 
-// execute callback every 1000ms
-SimpleTimer timer(1000, []() {
-    Serial.println("Tick!");
+SimpleTimer statusTimer(1000, []() {
+  Serial.println("one-second task");
 });
 
-void loop() {
-    timer.update();
-}
-```
-
-#### `SimpleDisplay`
-Wrapper for SSD1306/SH1106 OLED displays using `U8g2`.
-
-```cpp
-#include <SimpleDisplay.h>
-
-SimpleDisplay display(SDA, SCL);
-
 void setup() {
-    display.write("Hello World")
-           ->render();
+  Serial.begin(115200);
 }
-```
-
-#### `DeltaTimeComputer`
-Calculates high-precision `dt` for valid integration in control loops.
-* **Usage Context**: Crucial for kinematics and odometry (e.g., integrating velocity to calculate position over time). Provides accurate `dt` measurement between loop iterations to ensure mathematical calculations accurately mirror physical reality.
-
-```cpp
-#include <DeltaTimeComputer.h>
-
-DeltaTimeComputer dtComputer;
 
 void loop() {
-    dtComputer.update();
-    float dt = dtComputer.deltaInMillis() / 1000.0f;
+  statusTimer.update();
 }
 ```
 
-#### `I2CMultiplexor`
-Switch channels on TCA9548A multiplexers.
+### Differential left/right speed summary
+
+This helper averages front and rear wheel angular velocity on each side. It does not compute position, heading, wheel radius conversion, or time integration.
 
 ```cpp
-#include <I2CMultiplexor.h>
+#include <DifferentialRobotOdometry.h>
 
-I2CMultiplexor mux(0x70);
+FourWheelAngularSpeed measuredWheels;
+DifferentialRobotOdometry sides;
 
-void setup() {
-    mux.selectChannel(2);
+void loop() {
+  measuredWheels.updateFrom(3.0F, 3.2F, 2.8F, 3.0F); // rad/s
+  sides.updateFrom(measuredWheels);
+  const float left = sides.getLeftWInRad();
+  const float right = sides.getRightWInRad();
+  (void)left;
+  (void)right;
 }
 ```
 
-#### `timestamp`
-NTP synchronization helper.
+### Persistent counter
+
+LittleFS must be available on the target. Confirm filesystem mount/format policy in the firmware before storing important state.
 
 ```cpp
-#include <timestamp.h>
+#include <PersistentCounter.h>
+
+PersistentCounter bootCounter("/reboots.txt");
+int bootCount;
 
 void setup() {
-    syncClockTimeStamp(); // Syncs with pool.ntp.org
+  bootCount = bootCounter.read();
+  bootCounter.save(bootCount + 1);
 }
 ```
 
-## ⚖️ License
+`PersistentCounter::read()` and `save()` use an 8-bit count; values wrap above 255. Use `ConfigStorage` or a wider custom representation when that range is insufficient.
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+### Encoder update service
 
-## 📊 Test Coverage
+For multiple AS5600 encoders sharing a fixed I2C address, use an I2C multiplexer (commonly TCA9548A). Initialize `Wire`, build/register encoder channels during setup, and poll the service from the main loop. See the builder header and [API reference](https://nono-robotics.github.io/arduino-commons/) for callback and channel details.
 
-The latest native regression coverage report is published with the documentation site:
-[nono-robotics.github.io/arduino-commons/coverage](https://nono-robotics.github.io/arduino-commons/coverage/) (regenerated on every push to `main`).
+## Units and hardware limits
 
-Generate it locally with:
+- Wheel angular speed and `WToSignedPWMConverter` inputs/limits: radians per second (rad/s), signed for direction.
+- `FourWheelAngularSpeed` order: front-left, front-right, back-left, back-right.
+- `WheelSpeeds` snapshot additionally stores left/right averages; its ROS multi-array wire ordering is documented in `arduino-ros`.
+- PWM values are signed duty magnitudes bounded by the motor's configured resolution and converter limit. Electrical direction, actual dead zone, and usable maximum vary by driver, motor, battery, and load.
+- Encoder and IMU update intervals, GPS baud/pins, I2C address, display controller, and storage mount behavior are hardware/configuration-specific.
 
-```bash
+Tune against measured wheel speed/odometry on the intended robot. A calculated PWM value alone does not establish safe or accurate physical motion.
+
+## Native tests and hardware validation
+
+Run all mock-backed native tests:
+
+```sh
+pio test -e native
+```
+
+Run regression tests and generate local coverage:
+
+```sh
 commands/regression-test
-# open coverage/index.html
+# report: coverage/index.html
 ```
+
+See [`test/README`](test/README) for suite scope, mocks, coverage exclusions, and limitations. Native tests do not verify hardware timing, electrical PWM waveforms, physical I2C buses, sensor firmware, filesystem media, or end-to-end robot integration. Test hardware on the intended robot after changing pins, calibration, or motor parameters.
