@@ -4,8 +4,18 @@ set -euo pipefail
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$repo_root"
 
+doxygen_root="$HOME/.cache/doxygen-1.14.0"
+doxygen="$doxygen_root/bin/doxygen"
+if [[ ! -x "$doxygen" ]]; then
+    archive="$(mktemp)"
+    trap 'rm -f "$archive"' EXIT
+    curl --fail --location --output "$archive" \
+        https://www.doxygen.nl/files/doxygen-1.14.0.linux.bin.tar.gz
+    tar -xzf "$archive" -C "$HOME/.cache"
+fi
+
 rm -rf docs
-out="$(doxygen Doxyfile 2>&1)"
+out="$("$doxygen" Doxyfile 2>&1)"
 echo "$out"
 if grep -qi warning <<<"$out"; then
     echo "ERROR: doxygen warnings found" >&2
