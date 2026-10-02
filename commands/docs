@@ -11,6 +11,7 @@ if [[ ! -x "$doxygen" ]]; then
     trap 'rm -f "$archive"' EXIT
     curl --fail --location --output "$archive" \
         https://www.doxygen.nl/files/doxygen-1.14.0.linux.bin.tar.gz
+    mkdir -p "$HOME/.cache"
     tar -xzf "$archive" -C "$HOME/.cache"
 fi
 
