@@ -1,0 +1,9 @@
+PROJECT_NAME           = "arduino-commons"
+PROJECT_BRIEF          = "Shared PlatformIO/Arduino/ESP32 C++ drivers and utilities"
+INPUT                  = include src README.md
+RECURSIVE              = YES
+USE_MDFILE_AS_MAINPAGE = README.md
+EXTRACT_ALL            = YES
+GENERATE_LATEX         = NO
+OUTPUT_DIRECTORY       = docs
+QUIET                  = YES
