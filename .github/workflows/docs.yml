@@ -12,13 +12,19 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    container: ubuntu:22.04
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - run: sudo apt-get update && sudo apt-get install -y doxygen graphviz
+      - run: apt-get update && apt-get install -y git build-essential python3-pip curl ca-certificates doxygen graphviz
       - run: commands/docs
+      - name: Coverage report
+        run: |
+          pip3 install platformio gcovr
+          commands/regression-test
+          cp -r coverage docs/html/coverage
       - uses: actions/upload-pages-artifact@v3
         with:
           path: docs/html

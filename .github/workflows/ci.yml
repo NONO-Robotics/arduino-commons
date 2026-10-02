@@ -1,0 +1,15 @@
+name: ci
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    container: ubuntu:22.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: apt-get update && apt-get install -y git build-essential python3-pip
+      - run: pip3 install platformio gcovr
+      - run: commands/regression-test
