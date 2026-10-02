@@ -1,11 +1,30 @@
+# Native test harness
 
-This directory is intended for PlatformIO Test Runner and project tests.
+Run `pio test -e native`. PlatformIO builds every production source file with
+`test_build_src = yes`, then executes mock-backed Unity tests without hardware.
 
-Unit Testing is a software testing method by which individual units of
-source code, sets of one or more MCU program modules together with associated
-control data, usage procedures, and operating procedures, are tested to
-determine whether they are fit for use. Unit testing finds problems early
-in the development cycle.
+Run `commands/regression-test` for native source coverage. It cleans only native
+build artifacts, runs every test suite with GCC `--coverage`, prints a terminal
+summary, and writes the HTML details report to `coverage/index.html`.
+gcovr excludes compiler-generated `(throw)` exception edges (allocation-failure
+paths that unit tests cannot trigger); branch totals reflect that exclusion.
 
-More information about PlatformIO Unit Testing:
-- https://docs.platformio.org/en/latest/advanced/unit-testing/index.html
+Test suites are grouped one per production class (converters, timers, button,
+DC/BLDC motors, controllers, encoders and I2C devices, GPS/IMU sensors, data
+types, storage, multi-reset, feedback control). Shared mock-driven helpers live
+in `test/support/NativeTestCommon.h`; `test/mocks` provides only
+APIs called by production code and keeps GPIO, PWM, time, serial, I2C, and
+filesystem state inspectable.
+
+`syncClockTimeStamp` remains compile-covered only: its failed-time path waits
+forever by design. Native tests do not invoke that path, preserving production
+behavior.
+
+Mocks script library-facing states only: I2C addresses, transactions and short
+reads; BNO08x initialization/report/reset/event outcomes; LittleFS
+open/read/write/content outcomes; and TinyGPS++ location-field state. GPS
+callback tests follow GPSSensor's current `isLocationUpdated()` condition; the
+TinyGPS++ mock does not parse NMEA or validate upstream TinyGPS++ behavior.
+This suite does not
+validate hardware timing, electrical PWM waveforms, physical I2C buses, sensor
+firmware, filesystem media, or any hardware integration.

@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$repo_root"
+
+rm -rf .pio/build/native coverage
+
+pio test
+
+mkdir -p coverage
+gcovr \
+    --gcov-executable gcov \
+    --root "$repo_root" \
+    --object-directory "$repo_root/.pio/build/native" \
+    --filter 'src/' \
+    --exclude-throw-branches \
+    --print-summary \
+    --html-details "$repo_root/coverage/index.html"
