@@ -1,6 +1,47 @@
+:root {
+  color-scheme: light;
+  --github-canvas-default: #ffffff;
+  --github-muted-color: #57606a;
+  --github-inline-code-background: rgba(175, 184, 193, 0.2);
+  --page-link-color: #0969da;
+  --page-visited-link-color: #0969da;
+  --page-external-link-color: #0969da;
+  --tooltip-link-color: #0969da;
+  --code-keyword-color: #cf222e;
+  --code-type-keyword-color: #953800;
+  --code-flow-keyword-color: #cf222e;
+  --code-comment-color: #57606a;
+  --code-preprocessor-color: #0550ae;
+  --code-string-literal-color: #0a3069;
+  --code-char-literal-color: #0a3069;
+  --code-xml-cdata-color: #1f2328;
+  --code-vhdl-digit-color: #0550ae;
+  --code-vhdl-char-color: #0a3069;
+  --code-vhdl-keyword-color: #cf222e;
+  --code-vhdl-logic-color: #cf222e;
+  --code-link-color: #0969da;
+  --code-external-link-color: #0969da;
+  --fragment-foreground-color: #1f2328;
+  --fragment-background-color: #f6f8fa;
+  --fragment-border-color: #d0d7de;
+  --fragment-lineno-border-color: #d0d7de;
+  --fragment-lineno-background-color: #f6f8fa;
+  --fragment-lineno-foreground-color: #57606a;
+  --fragment-lineno-link-fg-color: #0969da;
+  --fragment-lineno-link-bg-color: #f6f8fa;
+  --fragment-lineno-link-hover-fg-color: #0969da;
+  --fragment-lineno-link-hover-bg-color: #eaeef2;
+  --fragment-copy-ok-color: #1a7f37;
+  --font-family-normal: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --font-family-title: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
 body {
+  background: var(--github-canvas-default);
+  color: #1f2328;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   font-size: 16px;
-  line-height: 1.6;
+  line-height: 1.5;
 }
 
 #doc-content > .header,
@@ -19,34 +60,52 @@ body {
 #doc-content h4,
 #doc-content h5,
 #doc-content h6 {
+  font-weight: 600;
   line-height: 1.25;
-  margin-top: 1.5em;
-  margin-bottom: 0.6em;
+  margin-top: 24px;
+  margin-bottom: 16px;
 }
 
-#doc-content a {
-  color: #0969da;
+#doc-content h1 {
+  border-bottom: 1px solid var(--fragment-border-color);
+  font-size: 2em;
+  padding-bottom: 0.3em;
 }
+
+#doc-content h2 {
+  border-bottom: 1px solid var(--fragment-border-color);
+  font-size: 1.5em;
+  padding-bottom: 0.3em;
+}
+
+#doc-content h3 { font-size: 1.25em; }
+#doc-content h4 { font-size: 1em; }
+#doc-content h5 { font-size: 0.875em; }
+#doc-content h6 { color: var(--github-muted-color); font-size: 0.85em; }
+
+#doc-content a { color: var(--page-link-color); }
 
 #doc-content pre,
 #doc-content div.fragment {
-  background: #f6f8fa;
-  border: 1px solid #d0d7de;
+  border: 1px solid var(--fragment-border-color);
   border-radius: 6px;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 0.9em;
+  line-height: 1.45;
+  overflow: auto;
   padding: 16px;
-}
-
-#doc-content pre {
-  overflow-x: auto;
 }
 
 #doc-content p code,
 #doc-content li code,
 #doc-content td code,
+#doc-content th code,
 #doc-content blockquote code {
-  background: #f6f8fa;
-  border-radius: 4px;
-  padding: 0.15em 0.3em;
+  background: var(--github-inline-code-background);
+  border-radius: 6px;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 85%;
+  padding: 0.2em 0.4em;
 }
 
 #doc-content table.markdownTable {
@@ -58,17 +117,61 @@ body {
 
 #doc-content table.markdownTable th,
 #doc-content table.markdownTable td {
-  border: 1px solid #d0d7de;
+  border: 1px solid var(--fragment-border-color);
   padding: 6px 13px;
 }
 
+#doc-content table.markdownTable th,
 #doc-content table.markdownTable tr:nth-child(2n) {
-  background: #f6f8fa;
+  background: var(--fragment-background-color);
 }
 
 #doc-content blockquote {
-  border-left: 0.25em solid #d0d7de;
-  color: #57606a;
+  background: var(--fragment-background-color);
+  border-left: 4px solid var(--fragment-border-color);
+  color: var(--github-muted-color);
   margin-left: 0;
   padding: 0 1em;
+}
+
+#doc-content hr { border-color: var(--fragment-border-color); }
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --github-canvas-default: #0d1117;
+    --github-muted-color: #8b949e;
+    --github-inline-code-background: rgba(110, 118, 129, 0.4);
+    --page-link-color: #4493f8;
+    --page-visited-link-color: #4493f8;
+    --page-external-link-color: #4493f8;
+    --tooltip-link-color: #4493f8;
+    --code-keyword-color: #ff7b72;
+    --code-type-keyword-color: #ffa657;
+    --code-flow-keyword-color: #ff7b72;
+    --code-comment-color: #8b949e;
+    --code-preprocessor-color: #79c0ff;
+    --code-string-literal-color: #a5d6ff;
+    --code-char-literal-color: #a5d6ff;
+    --code-xml-cdata-color: #e6edf3;
+    --code-vhdl-digit-color: #79c0ff;
+    --code-vhdl-char-color: #a5d6ff;
+    --code-vhdl-keyword-color: #d2a8ff;
+    --code-vhdl-logic-color: #ff7b72;
+    --code-link-color: #79c0ff;
+    --code-external-link-color: #79c0ff;
+    --fragment-foreground-color: #e6edf3;
+    --fragment-background-color: #161b22;
+    --fragment-border-color: #30363d;
+    --fragment-lineno-border-color: #30363d;
+    --fragment-lineno-background-color: #161b22;
+    --fragment-lineno-foreground-color: #8b949e;
+    --fragment-lineno-link-fg-color: #4493f8;
+    --fragment-lineno-link-bg-color: #161b22;
+    --fragment-lineno-link-hover-fg-color: #79c0ff;
+    --fragment-lineno-link-hover-bg-color: #21262d;
+    --fragment-copy-ok-color: #3fb950;
+  }
+
+  body { color: #e6edf3; }
 }
