@@ -1,7 +1,7 @@
 #include <unity.h>
 
+#include "ArduinoCommons.h"
 #include "NativeTestCommon.h"
-#include "WheelSpeedsMapper.h"
 
 void test_wheel_speeds_mapper_preserves_diagnostic_order() {
   FourWheelAngularSpeed angularSpeed;
