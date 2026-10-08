@@ -34,5 +34,6 @@
 #include "SimpleTimer.h"
 #include "StringUtils.h"
 #include "WToSignedPWMConverter.h"
+#include "WheelSpeedsMapper.h"
 #include "timestamp.h"
 #include <Arduino.h>
