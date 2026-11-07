@@ -205,6 +205,25 @@ void test_fault_feedback_brakes_for_every_wheel_position() {
   assertAllBrakesEngaged();
 }
 
+void test_fault_feedback_invalid_position_falls_back_to_front_left() {
+  // Prepare
+  resetMocks();
+  auto controller = makeControllerAllEnabled(1.0f, 0.5f);
+  const FourWheelAngularSpeed command = allTargets(1.0f);
+  feedFreshFeedbackForAllWheels(controller.get());
+
+  // Perform
+  const bool appliedBeforeFault = controller->applySpeed(command);
+  controller->faultFeedback(static_cast<WheelPosition>(255));
+  const bool appliedAfterFault = controller->applySpeed(command);
+  const bool brakesEngagedAfterFault = brakesEngaged();
+
+  // Asserts
+  TEST_ASSERT_TRUE(appliedBeforeFault);
+  TEST_ASSERT_FALSE(appliedAfterFault);
+  TEST_ASSERT_TRUE(brakesEngagedAfterFault);
+}
+
 void test_stop_engages_every_brake() {
   // Prepare
   resetMocks();
@@ -242,6 +261,7 @@ int main() {
   RUN_TEST(test_stale_measurements_brake_every_wheel);
   RUN_TEST(test_fault_all_feedback_recovers_only_after_fresh_inputs);
   RUN_TEST(test_fault_feedback_brakes_for_every_wheel_position);
+  RUN_TEST(test_fault_feedback_invalid_position_falls_back_to_front_left);
   RUN_TEST(test_stop_engages_every_brake);
   RUN_TEST(test_wheel_speed_scale_normalizes_measurement_and_pi_reacts);
   return UNITY_END();

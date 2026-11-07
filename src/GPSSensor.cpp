@@ -77,18 +77,22 @@ GPSSensorBuilder *GPSSensorBuilder::setBaudRate(int rate)
 GPSSensor *GPSSensorBuilder::build()
 {
     // --- VALIDATION AT BUILD TIME ---
+    // GCOVR_EXCL_START: Safety fail-stop logs then intentionally never returns; native tests cannot safely exercise it.
     if (rxPin == -1 || txPin == -1)
     {
         logger.error("FATAL ERROR: RX/TX pins must be set before building GPSSensor.");
         while (1)
             ; // Halt
     }
+    // GCOVR_EXCL_STOP
+    // GCOVR_EXCL_START: Safety fail-stop logs then intentionally never returns; native tests cannot safely exercise it.
     if (!onUpdate)
     {
         logger.error("FATAL ERROR: onUpdate callback must be set before building GPSSensor.");
         while (1)
             ; // Halt
     }
+    // GCOVR_EXCL_STOP
 
     return new GPSSensor(serial, rxPin, txPin, onUpdate, baudRate);
 }
