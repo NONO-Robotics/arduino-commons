@@ -9,11 +9,12 @@ Shared Arduino/ESP32 drivers, data types, and nonblocking utilities used by Indo
 - [Installation and dependencies](#installation-and-dependencies)
 - [Library map](#library-map)
 - [Usage patterns](#usage-patterns)
+- [Single-pass array pipeline](#single-pass-array-pipeline)
 - [Examples](#examples)
 - [Units and hardware limits](#units-and-hardware-limits)
 - [Native tests and hardware validation](#native-tests-and-hardware-validation)
 
-## Installation and dependencies
+## Installation and dependencies {#installation-and-dependencies}
 
 ### PlatformIO
 
@@ -38,7 +39,7 @@ Clone this repository into `Arduino/libraries/arduino-commons`, then restart the
 
 Include individual headers to keep dependencies and compile times smaller. `ArduinoCommons.h` is the umbrella include for common motor, sensor, timer, and utility types; newer specialized feedback and wheel snapshot types may require their own headers.
 
-## Library map
+## Library map {#library-map}
 
 | Area | Main headers/classes | Use |
 |---|---|---|
@@ -55,7 +56,7 @@ Include individual headers to keep dependencies and compile times smaller. `Ardu
 
 `DifferentialRobotOdometry` is a small shared data/aggregation type. It does not integrate pose `(x, y, theta)` and does not replace a ROS odometry estimator. Sensor-facing classes require real hardware and bus setup as described in their headers and API docs.
 
-## Usage patterns
+## Usage patterns {#usage-patterns}
 
 1. Declare objects with stable lifetime (global/static or owning application object).
 2. Initialize hardware once in `setup()`.
@@ -75,7 +76,37 @@ flowchart LR
 
 `BLDCMotorBuilder::build()` and several sensor builders return dynamically allocated pointers. If using these builders, call them only during initialization and retain the returned pointer for the object's full lifetime; do not construct them per loop iteration. APIs that accept references/stack objects can be used without heap allocation.
 
-## Examples
+## Single-pass array pipeline {#single-pass-array-pipeline}
+
+`ArrayPipeline.h` is a C++17 header-only, non-owning pipeline over a C array or pointer-and-length view. `filter` and `map` are lazy; each terminal operation traverses the source exactly once. It uses no heap allocation, type erasure, or virtual dispatch. Fluent temporary chains can call a terminal directly; a stored pipeline must be passed with `std::move` to consume it once.
+
+```cpp
+#include <ArrayPipeline.h>
+#include <utility>
+
+int readings[] = {1, 2, 3, 4};
+
+void setup() {
+  arrayPipeline(readings)
+      .filter([](int value) { return value % 2 == 0; })
+      .map([](int value) { return value * 10; })
+      .forEach([](int value) { Serial.println(value); });
+}
+```
+
+| Terminal | Result | Early stop |
+|---|---|---|
+| `forEach(consumer)` | Calls `consumer` for every accepted value | No |
+| `find(predicate, output)` | `bool`; assigns first match to `output` | First match |
+| `any(predicate)` | `bool` | First match |
+| `all(predicate)` | `bool`; true for an empty pipeline | First non-match |
+| `count()` | Accepted value count | No |
+| `reduce(initial, reducer)` | Final accumulator | No |
+| `collectInto(output, capacity)` | `CollectResult{written, truncated}` | No; bounded writes, sets `truncated` when values exceed capacity |
+
+Mapped references must remain valid for the immediate callback chain. Pointer-and-length views permit a null pointer only when length is zero.
+
+## Examples {#examples}
 
 ### Signed four-wheel angular speed
 
@@ -247,7 +278,7 @@ void setup() {
 
 For multiple AS5600 encoders sharing a fixed I2C address, use an I2C multiplexer (commonly TCA9548A). Initialize `Wire`, build/register encoder channels during setup, and poll the service from the main loop. See the builder header and [API reference](https://nono-robotics.github.io/arduino-commons/) for callback and channel details.
 
-## Units and hardware limits
+## Units and hardware limits {#units-and-hardware-limits}
 
 - Wheel angular speed and `WToSignedPWMConverter` inputs/limits: radians per second (rad/s), signed for direction.
 - `FourWheelAngularSpeed` order: front-left, front-right, back-left, back-right.
@@ -257,7 +288,7 @@ For multiple AS5600 encoders sharing a fixed I2C address, use an I2C multiplexer
 
 Tune against measured wheel speed/odometry on the intended robot. A calculated PWM value alone does not establish safe or accurate physical motion.
 
-## Native tests and hardware validation
+## Native tests and hardware validation {#native-tests-and-hardware-validation}
 
 Run all mock-backed native tests:
 

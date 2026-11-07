@@ -12,6 +12,7 @@
  */
 
 #include "AS5600Sensor.h"
+#include "ArrayPipeline.h"
 #include "BLDCMotor.h"
 #include "BLDCMotorBuilder.h"
 #include "Button.h"
