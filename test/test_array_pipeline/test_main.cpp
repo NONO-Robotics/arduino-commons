@@ -295,6 +295,39 @@ void test_array_pipeline_collect_into_preserves_order_and_reports_capacity() {
   TEST_ASSERT_EQUAL_INT(2, mapperCalls);
 }
 
+void test_array_pipeline_collect_into_static_array_infers_capacity() {
+  const int source[] = {1, 2, 3, 4};
+  int output[2] = {};
+
+  const auto result = arrayPipeline(source)
+                          .filter([](int value) { return value % 2 == 0; })
+                          .map([](int value) { return value * 10; })
+                          .collectInto(output);
+
+  TEST_ASSERT_EQUAL_UINT(2, result.written);
+  TEST_ASSERT_FALSE(result.truncated);
+  TEST_ASSERT_EQUAL_INT(20, output[0]);
+  TEST_ASSERT_EQUAL_INT(40, output[1]);
+}
+
+void test_array_pipeline_collect_into_static_array_reports_truncation() {
+  const int source[] = {1, 2, 3};
+  int output[1] = {};
+  int mapperCalls = 0;
+
+  const auto result = arrayPipeline(source)
+                          .map([&mapperCalls](int value) {
+                            ++mapperCalls;
+                            return value * 10;
+                          })
+                          .collectInto(output);
+
+  TEST_ASSERT_EQUAL_UINT(1, result.written);
+  TEST_ASSERT_TRUE(result.truncated);
+  TEST_ASSERT_EQUAL_INT(10, output[0]);
+  TEST_ASSERT_EQUAL_INT(3, mapperCalls);
+}
+
 void test_array_pipeline_collect_into_accepts_null_output_with_zero_capacity() {
   const int source[] = {1};
 
@@ -320,6 +353,8 @@ int main() {
   RUN_TEST(test_array_pipeline_all_stops_at_first_non_match_and_empty_is_true);
   RUN_TEST(test_array_pipeline_count_and_reduce_consume_pipeline_output);
   RUN_TEST(test_array_pipeline_collect_into_preserves_order_and_reports_capacity);
+  RUN_TEST(test_array_pipeline_collect_into_static_array_infers_capacity);
+  RUN_TEST(test_array_pipeline_collect_into_static_array_reports_truncation);
   RUN_TEST(test_array_pipeline_collect_into_accepts_null_output_with_zero_capacity);
   return UNITY_END();
 }

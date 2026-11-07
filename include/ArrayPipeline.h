@@ -183,6 +183,19 @@ class PipelineOperations {
         });
     return result;
   }
+
+  /**
+   * @brief Collects accepted values into a caller-owned C array.
+   * @tparam Output Element type of the caller-owned output array.
+   * @tparam Capacity Compile-time number of writable elements in @p output.
+   * @param output Destination array whose capacity is inferred automatically.
+   * @return Count of written values and whether later accepted values were truncated.
+   * @note Delegates to the pointer-and-capacity overload and traverses the source once.
+   */
+  template <typename Output, std::size_t Capacity>
+  CollectResult collectInto(Output (&output)[Capacity]) && {
+    return std::move(static_cast<Derived&>(*this)).collectInto(output, Capacity);
+  }
 };
 
 template <typename Consumer, typename Predicate>

@@ -78,21 +78,7 @@ flowchart LR
 
 ## Single-pass array pipeline {#single-pass-array-pipeline}
 
-`ArrayPipeline.h` is a C++17 header-only, non-owning pipeline over a C array or pointer-and-length view. `filter` and `map` are lazy; each terminal operation traverses the source exactly once. It uses no heap allocation, type erasure, or virtual dispatch. Fluent temporary chains can call a terminal directly; a stored pipeline must be passed with `std::move` to consume it once.
-
-```cpp
-#include <ArrayPipeline.h>
-#include <utility>
-
-int readings[] = {1, 2, 3, 4};
-
-void setup() {
-  arrayPipeline(readings)
-      .filter([](int value) { return value % 2 == 0; })
-      .map([](int value) { return value * 10; })
-      .forEach([](int value) { Serial.println(value); });
-}
-```
+`ArrayPipeline.h` is a C++17 header-only, non-owning pipeline over a C array or pointer-and-length view. `filter` and `map` are lazy; each terminal operation traverses the source exactly once. It uses no heap allocation, type erasure, or virtual dispatch. Fluent temporary chains call terminals directly. A stored pipeline must be passed with `std::move` to consume it once.
 
 | Terminal | Result | Early stop |
 |---|---|---|
@@ -102,7 +88,103 @@ void setup() {
 | `all(predicate)` | `bool`; true for an empty pipeline | First non-match |
 | `count()` | Accepted value count | No |
 | `reduce(initial, reducer)` | Final accumulator | No |
-| `collectInto(output, capacity)` | `CollectResult{written, truncated}` | No; bounded writes, sets `truncated` when values exceed capacity |
+| `collectInto(output)` | `CollectResult{written, truncated}`; infers C-array capacity | No; bounded writes, sets `truncated` when values exceed capacity |
+| `collectInto(output, capacity)` | `CollectResult{written, truncated}` for pointer views | No; bounded writes, sets `truncated` when values exceed capacity |
+
+### Source views and lazy stages
+
+`arrayPipeline(array)` creates a view over a C array. `arrayPipeline(pointer, length)` supports a selected subrange; a null pointer is valid only with zero length. `filter` retains matching values and `map` transforms accepted values. Neither runs until a terminal operation consumes the pipeline.
+
+```cpp
+int readings[] = {1, 2, 3, 4};
+
+arrayPipeline(readings)
+    .filter([](int value) { return value % 2 == 0; })
+    .map([](int value) { return value * 10; })
+    .forEach([](int command) { Serial.println(command); }); // 20, 40
+
+const int* window = readings + 1;
+arrayPipeline(window, 2).forEach([](int value) { Serial.println(value); }); // 2, 3
+```
+
+### `forEach`
+
+Use `forEach` when every accepted value causes an immediate effect, such as sending a command. Keep the consumer nonblocking.
+
+```cpp
+arrayPipeline(readings)
+    .filter([](int value) { return value > 2; })
+    .forEach([](int value) { sendCommand(value); });
+```
+
+### `find`
+
+Use `find` to retrieve the first matching pipeline value. It preserves `firstAlarm` when no value matches and stops at the first match.
+
+```cpp
+int firstAlarm = 0;
+const bool hasAlarm = arrayPipeline(readings)
+                          .map([](int value) { return value * 10; })
+                          .find([](int value) { return value >= 30; }, firstAlarm);
+// hasAlarm is true; firstAlarm is 30.
+```
+
+### `any` and `all`
+
+Use `any` for an existence check and `all` for validation. Both short-circuit when the result is known; `all` returns true for an empty pipeline.
+
+```cpp
+const bool hasInvalidReading = arrayPipeline(readings).any(
+    [](int value) { return value < 0; });
+const bool readingsInRange = arrayPipeline(readings).all(
+    [](int value) { return value >= 0 && value <= 100; });
+```
+
+### `count` and `reduce`
+
+Use `count` to measure accepted values and `reduce` to accumulate them. `reduce` returns its initial value when no values are accepted.
+
+```cpp
+const std::size_t validCount = arrayPipeline(readings)
+                                   .filter([](int value) { return value > 1; })
+                                   .count();
+const int sum = arrayPipeline(readings)
+                    .filter([](int value) { return value % 2 == 0; })
+                    .reduce(0, [](int total, int value) { return total + value; });
+```
+
+### `collectInto`
+
+Use the C-array overload when destination storage has static capacity. It infers capacity, performs no allocation, and reports how much was written. `truncated` is true when accepted values did not fit.
+
+```cpp
+int commands[2] = {};
+const CollectResult result = arrayPipeline(readings)
+                                 .filter([](int value) { return value % 2 == 0; })
+                                 .map([](int value) { return value * 10; })
+                                 .collectInto(commands);
+// commands: {20, 40}; result.written: 2; result.truncated: false.
+```
+
+Use the pointer-and-capacity overload when capacity is available only at runtime.
+
+```cpp
+int* output = commands;
+const std::size_t capacity = 2;
+const CollectResult result = arrayPipeline(readings).collectInto(output, capacity);
+```
+
+### Stored pipelines
+
+Pipelines are single-use. Temporary fluent chains above already are rvalues. Only a pipeline stored in a variable needs `std::move` at its terminal operation.
+
+```cpp
+#include <utility>
+
+auto validReadings = arrayPipeline(readings)
+                         .filter([](int value) { return value >= 0; });
+const std::size_t count = std::move(validReadings).count();
+```
 
 Mapped references must remain valid for the immediate callback chain. Pointer-and-length views permit a null pointer only when length is zero.
 

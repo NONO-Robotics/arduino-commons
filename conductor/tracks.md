@@ -4,6 +4,9 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
+## [x] Track: Add static collectInto overload and API examples
+*Link: [./conductor/tracks/static_collect_into_20261107/](./conductor/tracks/static_collect_into_20261107/)*
+
 ## [x] Track: Implement single-pass C++17 array pipeline
 *Link: [./conductor/tracks/single_pass_array_pipeline_20261107/](./conductor/tracks/single_pass_array_pipeline_20261107/)*
 
