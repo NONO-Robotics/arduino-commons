@@ -1,0 +1,8 @@
+{
+  "track_id": "coverage_gate_20261107",
+  "type": "chore",
+  "status": "completed",
+  "created_at": "2026-11-07T13:44:52Z",
+  "updated_at": "2026-11-07T14:03:05Z",
+  "description": "Restore native branch coverage gate"
+}
