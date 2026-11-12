@@ -42,6 +42,10 @@ BLDCMotorController *BLDCMotorController::setPwmSpeed(int value)
   return this;
 };
 
+int BLDCMotorController::getAppliedPwm() const {
+  return motor->getAppliedPwm();
+}
+
 BLDCMotorController *BLDCMotorController::stop()
 {
   motor->stop();

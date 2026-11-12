@@ -69,6 +69,12 @@ public:
   BLDCMotorController *setPwmSpeed(int value);
 
   /**
+   * @brief Returns the signed PWM duty currently applied by the motor.
+   * @return Applied PWM duty; zero when stopped or braked.
+   */
+  int getAppliedPwm() const;
+
+  /**
    * @brief Stops the controlled motor.
    * @return Pointer to this controller after stopping its motor.
    */

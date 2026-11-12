@@ -125,6 +125,10 @@ void OutdoorFourWheelFeedbackController::stop()
   backLeft_.reset();
 }
 
+void OutdoorFourWheelFeedbackController::getAppliedPwm(int (&pwm)[4]) const {
+  controller_.getAppliedPwm(pwm);
+}
+
 bool OutdoorFourWheelFeedbackController::applySpeed(
     const FourWheelAngularSpeed &fwAngularSpeed)
 {

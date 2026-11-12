@@ -122,6 +122,25 @@ void test_apply_speed_drives_every_wheel_when_feedback_is_disabled() {
   TEST_ASSERT_GREATER_THAN(0, arduino_mock::pwm_values[20]);
 }
 
+void test_get_applied_pwm_returns_signed_values_in_diagnostic_order() {
+  // Prepare
+  resetMocks();
+  auto controller = makeControllerAllDisabled();
+  FourWheelAngularSpeed command;
+  command.updateFrom(2.0f, -2.0f, -1.0f, 1.0f);
+  int pwm[4] = {};
+
+  // Perform
+  TEST_ASSERT_TRUE(controller->applySpeed(command));
+  controller->getAppliedPwm(pwm);
+
+  // Asserts
+  TEST_ASSERT_EQUAL_INT(arduino_mock::pwm_values[14], pwm[0]);
+  TEST_ASSERT_EQUAL_INT(-arduino_mock::pwm_values[11], pwm[1]);
+  TEST_ASSERT_EQUAL_INT(-arduino_mock::pwm_values[20], pwm[2]);
+  TEST_ASSERT_EQUAL_INT(arduino_mock::pwm_values[17], pwm[3]);
+}
+
 void test_enabled_feedback_without_measurements_brakes_every_wheel() {
   // Prepare
   resetMocks();
@@ -256,6 +275,7 @@ void test_wheel_speed_scale_normalizes_measurement_and_pi_reacts() {
 int main() {
   UNITY_BEGIN();
   RUN_TEST(test_apply_speed_drives_every_wheel_when_feedback_is_disabled);
+  RUN_TEST(test_get_applied_pwm_returns_signed_values_in_diagnostic_order);
   RUN_TEST(test_enabled_feedback_without_measurements_brakes_every_wheel);
   RUN_TEST(test_fresh_command_and_measurements_unlock_feedback);
   RUN_TEST(test_stale_measurements_brake_every_wheel);

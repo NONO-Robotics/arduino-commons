@@ -82,6 +82,12 @@ class OutdoorFourWheelFeedbackController {
   void stop();
 
   /**
+   * @brief Copies signed applied PWM values in FL, FR, BL, BR order.
+   * @param pwm Destination array with exactly four elements.
+   */
+  void getAppliedPwm(int (&pwm)[4]) const;
+
+  /**
    * @brief Applies logical targets when every active enabled channel is safe.
    *
    * Only a corrected, nonzero target is floored to minW. Zero targets reset
