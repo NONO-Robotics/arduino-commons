@@ -22,6 +22,17 @@ struct BLDCMotorSettings {
   int maxPwm;
   /** @brief Output multiplier applied to this motor. */
   float factor;
+  /** @brief Optional firmware-owned angular-speed to PWM converter. */
+  const SpeedToPwmConverter *speedToPwmConverter;
+
+  constexpr BLDCMotorSettings(int pwmPin, int directionPin, int brakePin,
+                              int pwmChannel, bool invertDirection, float maxW,
+                              int minPwm, int maxPwm, float factor = 1.0F,
+                              const SpeedToPwmConverter *speedToPwmConverter = nullptr)
+      : pwmPin(pwmPin), directionPin(directionPin), brakePin(brakePin),
+        pwmChannel(pwmChannel), invertDirection(invertDirection), maxW(maxW),
+        minPwm(minPwm), maxPwm(maxPwm), factor(factor),
+        speedToPwmConverter(speedToPwmConverter) {}
 };
 
 /**
@@ -32,7 +43,7 @@ struct BLDCMotorSettings {
  */
 class BLDCMotorController {
 private:
-  WToSignedPWMConverter *wConverter;
+  const SpeedToPwmConverter *wConverter;
   BLDCMotor *motor;
   float factor;
 
@@ -47,6 +58,15 @@ public:
    * @param factor Scale applied to the angular-speed command; defaults to 1.0.
    */
   BLDCMotorController(BLDCMotor *motor, float maxW, int minPwm, int maxPwm, float factor = 1.0);
+
+  /**
+   * @brief Creates a controller using a firmware-selected speed-to-PWM strategy.
+   * @param motor Pointer to the initialized BLDCMotor to command.
+   * @param converter Non-owning converter reference that outlives this controller.
+   * @param factor Output multiplier applied after conversion; defaults to 1.0.
+   */
+  BLDCMotorController(BLDCMotor *motor, const SpeedToPwmConverter &converter,
+                      float factor = 1.0F);
 
   /**
    * @brief Initializes the controlled motor and its speed-to-PWM converter.

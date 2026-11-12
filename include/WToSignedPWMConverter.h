@@ -1,6 +1,19 @@
 #pragma once
 #include <Arduino.h>
 
+/** @brief Converts a signed wheel angular-speed target to signed PWM. */
+class SpeedToPwmConverter {
+ public:
+  virtual ~SpeedToPwmConverter() = default;
+
+  /**
+   * @brief Converts an angular-speed target to a bounded signed PWM command.
+   * @param targetW Requested signed angular velocity in rad/s.
+   * @return Signed PWM duty-cycle value; zero stops the motor.
+   */
+  virtual int convert(float targetW) const = 0;
+};
+
 /**
  * @brief Converts robot physical limits and PWM resolution into control values.
  * 
@@ -8,7 +21,7 @@
  * the physical motors' PWM. Handles constraints such as motor deadzones 
  * (minimum PWM required to move) and maximum limits to protect hardware.
  */
-class WToSignedPWMConverter {
+class WToSignedPWMConverter : public SpeedToPwmConverter {
 private:
   float maxW;
   int minPwm;
@@ -31,5 +44,28 @@ public:
    * @param w Requested angular velocity in rad/s.
    * @return Signed PWM duty-cycle value; sign indicates requested direction.
    */
-  int convert(float w);
+  int convert(float w) const override;
+};
+
+/** @brief Interpolates a measured wheel-speed to PWM calibration table. */
+class TableSpeedToPwmConverter final : public SpeedToPwmConverter {
+ public:
+  /** @brief One nonnegative measured wheel-speed and PWM pair. */
+  struct Point {
+    int pwm;
+    float w;
+  };
+
+  /**
+   * @brief Creates a converter over ascending wheel-speed calibration points.
+   * @param points Measured nonnegative speed-to-PWM points owned by firmware.
+   * @param pointCount Number of calibration points.
+   */
+  TableSpeedToPwmConverter(const Point* points, unsigned int pointCount);
+
+  int convert(float targetW) const override;
+
+ private:
+  const Point* points_;
+  unsigned int pointCount_;
 };

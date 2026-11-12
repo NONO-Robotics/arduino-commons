@@ -10,9 +10,15 @@ BLDCMotorController *buildController(const BLDCMotorSettings &settings) {
   if (settings.invertDirection) {
     builder->invertDirection();
   }
-  return (new BLDCMotorController(builder->build(), settings.maxW,
-                                  settings.minPwm, settings.maxPwm,
-                                  settings.factor))
+  BLDCMotor *motor = builder->build();
+  if (settings.speedToPwmConverter != nullptr) {
+    return (new BLDCMotorController(motor, *settings.speedToPwmConverter,
+                                    settings.factor))
+        ->setup();
+  }
+
+  return (new BLDCMotorController(motor, settings.maxW, settings.minPwm,
+                                   settings.maxPwm, settings.factor))
       ->setup();
 }
 } // namespace

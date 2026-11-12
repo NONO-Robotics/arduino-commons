@@ -16,7 +16,15 @@ BLDCMotorController::BLDCMotorController(
       maxW,
       motor->getResolutionInBits(),
       minPwm,
-      maxPwm);
+       maxPwm);
+};
+
+BLDCMotorController::BLDCMotorController(
+    BLDCMotor *motor, const SpeedToPwmConverter &converter, float factor)
+{
+  this->motor = motor;
+  this->factor = factor;
+  this->wConverter = &converter;
 };
 
 BLDCMotorController *BLDCMotorController::setup()
