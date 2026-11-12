@@ -26,6 +26,10 @@ void test_four_wheel_controller_applies_speed_and_directions() {
   TEST_ASSERT_EQUAL_INT(OUTPUT, arduino_mock::pin_modes[14]);
   TEST_ASSERT_EQUAL_INT(OUTPUT, arduino_mock::pin_modes[17]);
   TEST_ASSERT_EQUAL_INT(OUTPUT, arduino_mock::pin_modes[20]);
+  TEST_ASSERT_EQUAL_UINT32(1000, arduino_mock::pwm_setups[11].frequency);
+  TEST_ASSERT_EQUAL_UINT32(1000, arduino_mock::pwm_setups[14].frequency);
+  TEST_ASSERT_EQUAL_UINT32(1000, arduino_mock::pwm_setups[17].frequency);
+  TEST_ASSERT_EQUAL_UINT32(1000, arduino_mock::pwm_setups[20].frequency);
 }
 
 void test_four_wheel_controller_stop_engages_all_brakes() {

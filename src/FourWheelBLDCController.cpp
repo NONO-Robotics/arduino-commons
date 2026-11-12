@@ -4,7 +4,9 @@ namespace {
 BLDCMotorController *buildController(const BLDCMotorSettings &settings) {
   BLDCMotorBuilder *builder = new BLDCMotorBuilder(
       settings.pwmPin, settings.directionPin, settings.brakePin);
-  builder->setChannel(settings.pwmChannel)->setResolutionInBits(8);
+  builder->setChannel(settings.pwmChannel)
+      ->setResolutionInBits(8)
+      ->setFrequency(1000);
   if (settings.invertDirection) {
     builder->invertDirection();
   }
@@ -13,7 +15,7 @@ BLDCMotorController *buildController(const BLDCMotorSettings &settings) {
                                   settings.factor))
       ->setup();
 }
-}  // namespace
+} // namespace
 
 FourWheelBLDCController::FourWheelBLDCController(
     const BLDCMotorSettings &frontRight, const BLDCMotorSettings &frontLeft,
@@ -32,7 +34,7 @@ void FourWheelBLDCController::stop() {
 }
 
 void FourWheelBLDCController::applySpeed(
-    const FourWheelAngularSpeed& fwAngularSpeed) {
+    const FourWheelAngularSpeed &fwAngularSpeed) {
   motorFrontRightController->setRadsBySegSpeed(fwAngularSpeed.getFrWInRad());
   motorFrontLeftController->setRadsBySegSpeed(fwAngularSpeed.getFlWInRad());
   motorBackRightController->setRadsBySegSpeed(fwAngularSpeed.getBrWInRad());
