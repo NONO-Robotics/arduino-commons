@@ -60,12 +60,15 @@ class TableSpeedToPwmConverter final : public SpeedToPwmConverter {
    * @brief Creates a converter over ascending wheel-speed calibration points.
    * @param points Measured nonnegative speed-to-PWM points owned by firmware.
    * @param pointCount Number of calibration points.
+   * @param maxPwm Maximum magnitude permitted during extrapolation.
    */
-  TableSpeedToPwmConverter(const Point* points, unsigned int pointCount);
+  TableSpeedToPwmConverter(const Point* points, unsigned int pointCount,
+                           int maxPwm);
 
   int convert(float targetW) const override;
 
  private:
   const Point* points_;
   unsigned int pointCount_;
+  int maxPwm_;
 };
