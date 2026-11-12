@@ -38,3 +38,10 @@ void FourWheelBLDCController::applySpeed(
   motorBackRightController->setRadsBySegSpeed(fwAngularSpeed.getBrWInRad());
   motorBackLeftController->setRadsBySegSpeed(fwAngularSpeed.getBlWInRad());
 }
+
+void FourWheelBLDCController::getAppliedPwm(int (&pwm)[4]) const {
+  pwm[0] = motorFrontLeftController->getAppliedPwm();
+  pwm[1] = motorFrontRightController->getAppliedPwm();
+  pwm[2] = motorBackLeftController->getAppliedPwm();
+  pwm[3] = motorBackRightController->getAppliedPwm();
+}

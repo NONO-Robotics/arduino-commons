@@ -12,6 +12,8 @@ BLDCMotor::BLDCMotor(int pwmPin, int dirPin, int brakePin, int resolutionInBits,
 
 int BLDCMotor::getResolutionInBits() { return resolutionInBits; }
 
+int BLDCMotor::getAppliedPwm() const { return currentSpeed; }
+
 // Pin Initialization
 BLDCMotor *BLDCMotor::setup() {
   pinMode(pwmPin, OUTPUT);

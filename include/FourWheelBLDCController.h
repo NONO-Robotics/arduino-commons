@@ -47,4 +47,10 @@ private:
    * rad/s.
    */
   void applySpeed(const FourWheelAngularSpeed &fwAngularSpeed);
+
+  /**
+   * @brief Copies signed applied PWM values in FL, FR, BL, BR order.
+   * @param pwm Destination array with exactly four elements.
+   */
+  void getAppliedPwm(int (&pwm)[4]) const;
 };

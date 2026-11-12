@@ -46,6 +46,12 @@ public:
   int getResolutionInBits();
 
   /**
+   * @brief Returns the signed PWM duty most recently applied to the motor.
+   * @return Applied PWM duty; zero when the motor is stopped or braked.
+   */
+  int getAppliedPwm() const;
+
+  /**
  * @brief Activates the motor driver's physical brake output.
  * @return Pointer to this BLDCMotor instance with braking enabled.
    */
