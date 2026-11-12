@@ -37,23 +37,37 @@ void test_bldc_motor_controller_uses_an_injected_converter() {
   TEST_ASSERT_EQUAL_INT(42, arduino_mock::pwm_values[4]);
 }
 
-void test_table_speed_to_pwm_converter_interpolates_and_clamps() {
+void test_table_speed_to_pwm_converter_interpolates_and_extrapolates() {
   constexpr TableSpeedToPwmConverter::Point points[] = {
       {5, 0.9F},
       {10, 1.9F},
   };
-  TableSpeedToPwmConverter converter(points, 2);
+  TableSpeedToPwmConverter converter(points, 2, 20);
 
   TEST_ASSERT_EQUAL_INT(0, converter.convert(0.001F));
   TEST_ASSERT_EQUAL_INT(5, converter.convert(0.9F));
   TEST_ASSERT_EQUAL_INT(8, converter.convert(1.4F));
-  TEST_ASSERT_EQUAL_INT(-10, converter.convert(-2.0F));
+  TEST_ASSERT_EQUAL_INT(-11, converter.convert(-2.0F));
+  TEST_ASSERT_EQUAL_INT(20, converter.convert(4.0F));
+}
+
+void test_table_speed_to_pwm_converter_never_exceeds_explicit_maximum() {
+  constexpr TableSpeedToPwmConverter::Point points[] = {
+      {5, 1.0F},
+      {30, 2.0F},
+  };
+  TableSpeedToPwmConverter converter(points, 2, 20);
+
+  TEST_ASSERT_EQUAL_INT(20, converter.convert(2.0F));
+  TEST_ASSERT_EQUAL_INT(20, converter.convert(3.0F));
+  TEST_ASSERT_EQUAL_INT(-20, converter.convert(-3.0F));
 }
 
 int main() {
   UNITY_BEGIN();
   RUN_TEST(test_bldc_motor_controller_maps_rads_and_pwm);
   RUN_TEST(test_bldc_motor_controller_uses_an_injected_converter);
-  RUN_TEST(test_table_speed_to_pwm_converter_interpolates_and_clamps);
+  RUN_TEST(test_table_speed_to_pwm_converter_interpolates_and_extrapolates);
+  RUN_TEST(test_table_speed_to_pwm_converter_never_exceeds_explicit_maximum);
   return UNITY_END();
 }

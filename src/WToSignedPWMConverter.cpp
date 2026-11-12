@@ -42,8 +42,9 @@ int WToSignedPWMConverter::convert(float w) const {
 };
 
 TableSpeedToPwmConverter::TableSpeedToPwmConverter(const Point* points,
-                                                   unsigned int pointCount)
-    : points_(points), pointCount_(pointCount) {}
+                                                    unsigned int pointCount,
+                                                    int maxPwm)
+    : points_(points), pointCount_(pointCount), maxPwm_(maxPwm) {}
 
 int TableSpeedToPwmConverter::convert(float targetW) const {
   if (!isfinite(targetW) || points_ == nullptr || pointCount_ == 0 ||
@@ -53,24 +54,48 @@ int TableSpeedToPwmConverter::convert(float targetW) const {
 
   const int sign = targetW < 0.0F ? -1 : 1;
   const float requestedW = fabsf(targetW);
-  if (requestedW <= points_[0].w) {
-    return sign * points_[0].pwm;
-  }
-
+  const Point& first = points_[0];
   const Point& last = points_[pointCount_ - 1];
-  if (requestedW >= last.w) {
-    return sign * last.pwm;
+  const int limit = maxPwm_ > 0 ? maxPwm_ : last.pwm;
+
+  if (requestedW <= first.w) {
+    return sign * (first.pwm > limit ? limit : first.pwm);
   }
 
-  for (unsigned int index = 0; index < pointCount_ - 1; ++index) {
+  for (unsigned int index = 0; index + 1 < pointCount_; ++index) {
     const Point& lower = points_[index];
     const Point& upper = points_[index + 1];
     if (requestedW <= upper.w) {
-      const float fraction = (requestedW - lower.w) / (upper.w - lower.w);
-      return sign * static_cast<int>(
-                        lroundf(lower.pwm + fraction * (upper.pwm - lower.pwm)));
+      const float deltaW = upper.w - lower.w;
+      if (deltaW <= 0.0F) {
+        return sign * (lower.pwm > limit ? limit : lower.pwm);
+      }
+
+      const float fraction = (requestedW - lower.w) / deltaW;
+      const float pwm = lower.pwm + fraction * (upper.pwm - lower.pwm);
+      const int roundedPwm = static_cast<int>(lroundf(pwm));
+      return sign * (roundedPwm > limit ? limit : roundedPwm);
     }
   }
 
-  return sign * last.pwm;
+  if (pointCount_ < 2) {
+    return sign * (last.pwm > limit ? limit : last.pwm);
+  }
+
+  const Point& previous = points_[pointCount_ - 2];
+  const float deltaW = last.w - previous.w;
+  const float deltaPwm = static_cast<float>(last.pwm - previous.pwm);
+
+  if (deltaW <= 0.0F || deltaPwm <= 0.0F) {
+    return sign * (last.pwm > limit ? limit : last.pwm);
+  }
+
+  const float extrapolatedPwm =
+      last.pwm + (requestedW - last.w) * (deltaPwm / deltaW);
+  if (!isfinite(extrapolatedPwm) ||
+      extrapolatedPwm >= static_cast<float>(limit)) {
+    return sign * limit;
+  }
+
+  return sign * static_cast<int>(lroundf(extrapolatedPwm));
 }
