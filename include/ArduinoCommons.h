@@ -19,6 +19,7 @@
 #include "ConfigStorage.h"
 #include "DCMotor.h"
 #include "DeltaTimeComputer.h"
+#include "DigitalOutput.h"
 #include "DifferentialRobotOdometry.h"
 #include "EncoderAngularVelocityEstimator.h"
 #include "FourWheelAngularSpeed.h"
